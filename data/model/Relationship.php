@@ -367,7 +367,9 @@ class Relationship extends \lithium\core\Object {
 		$related = array();
 
 		$indexes = $this->_index($collection, $formKey);
-		$related = $this->_find(array_keys($indexes), $options);
+		if (!$related = $this->_find(array_keys($indexes), $options)) {
+			return array();
+		}
 		$indexes = $this->_index($related, $toKey);
 
 		$fieldName = $this->fieldName();
@@ -406,10 +408,12 @@ class Relationship extends \lithium\core\Object {
 			}
 		}
 
-		$related = [];
+		$related = array();
 
 		$indexes = $this->_index($collection, $formKey);
-		$related = $this->_find(array_keys($indexes), $options);
+		if (!$related = $this->_find(array_keys($indexes), $options)) {
+			return array();
+		}
 		$fieldName = $this->fieldName();
 
 		foreach ($collection as $index => $entity) {
@@ -454,7 +458,9 @@ class Relationship extends \lithium\core\Object {
 		$related = array();
 
 		$list = $this->_list($collection, $formKey);
-		$related = $this->_find($list, $options);
+		if (!$related = $this->_find($list, $options)) {
+			return array();
+		}
 		$indexes = $this->_index($related, $toKey);
 		$fieldName = $this->fieldName();
 
@@ -498,7 +504,9 @@ class Relationship extends \lithium\core\Object {
 		$related = array();
 
 		$indexes = $this->_index($collection, $formKey);
-		$related = $this->_find(array_keys($indexes), $options);
+		if (!$related = $this->_find(array_keys($indexes), $options)) {
+			return array();
+		}
 		$fieldName = $this->fieldName();
 
 		foreach ($related as $index => $entity) {
@@ -569,9 +577,10 @@ class Relationship extends \lithium\core\Object {
 	protected function _list($collection, $name) {
 		$list = array();
 		foreach ($collection as $key => $entity) {
-			$array = is_object($entity) ? $entity->{$name} : $entity[$name];
-			foreach ($array as $id) {
-				$list[] = $id;
+			if ($array = is_object($entity) ? $entity->{$name} : $entity[$name]) {
+				foreach ($array as $id) {
+					$list[] = $id;
+				}
 			}
 		}
 		return $list;

@@ -957,7 +957,7 @@ class MongoDb extends \lithium\data\Source {
 		};
 
 		foreach ($conditions as $key => $value) {
-			if (in_array($key, $this->_boolean)) {
+			if (in_array($key, $this->_boolean, true)) {
 				$operator = isset($ops[$key]) ? $ops[$key] : $key;
 
 				foreach ($value as $i => $compare) {

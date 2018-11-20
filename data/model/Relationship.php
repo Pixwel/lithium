@@ -10,6 +10,7 @@
 namespace lithium\data\model;
 
 use Exception;
+use Countable;
 use Traversable;
 use lithium\util\Set;
 use lithium\core\Libraries;
@@ -213,15 +214,18 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 			if (empty($object->{$from})) {
 				return;
 			}
-
 			$conditions[$to] = $object->{$from};
 
-			if ($conditions[$to] instanceof Traversable) {
-				$conditions[$to] = iterator_to_array($conditions[$to], false);
+			if (is_object($conditions[$to])) {
+				if ($conditions[$to] instanceof Countable) {
+					$conditions[$to] = iterator_to_array($conditions[$to], false);
+				} elseif (method_exists($conditions[$to], 'data')) {
+					$conditions[$to] = $conditions[$to]->data();
+				}
 			}
 
 			if (empty($conditions[$to])) {
-				return;
+				return null;
 			}
 		}
 		$fields = $this->fields();
@@ -336,7 +340,6 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 	 */
 	public function embed(&$collection, $options = []) {
 		$keys = $this->key();
-
 		if (count($keys) !== 1) {
 			throw new Exception("The embedding doesn't support composite primary key.");
 		}
@@ -389,6 +392,7 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 				}
 			}
 		}
+
 		return $related;
 	}
 
@@ -514,6 +518,7 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 				}
 			}
 		}
+
 		return $related;
 	}
 

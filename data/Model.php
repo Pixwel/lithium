@@ -1492,6 +1492,8 @@ class Model extends \lithium\core\StaticObject {
 			$subrelations = [];
 			foreach ($relations as $path => $value) {
 				if (preg_match('~^'.$name.'\.(.*)$~', $path, $matches)) {
+					$subrelations[$matches[1]] = $value;
+				} elseif (is_string($value) && preg_match('~^'.$name.'\.(.*)$~', $value, $matches)) {
 					$subrelations[] = $matches[1];
 				}
 			}

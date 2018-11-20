@@ -341,7 +341,7 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 	public function embed(&$collection, $options = []) {
 		$keys = $this->key();
 		if (count($keys) !== 1) {
-			throw new Exception("The embedding doesn't support composite primary key.");
+			throw new Exception("The embedding doesn't support composite or no primary key.");
 		}
 
 		switch($this->type()) {
@@ -407,6 +407,12 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 		$keys = $this->key();
 		$formKey = key($keys);
 		$toKey = current($keys);
+
+		if (!empty($options['fields'])) {
+			if (!in_array($toKey, $options['fields'], true)) {
+				$options['fields'][] = $toKey;
+			}
+		}
 
 		$related = [];
 
@@ -493,7 +499,7 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 	 * @param array $options The embed query options.
 	 * @return mixed The fetched data.
 	 */
-	protected function _embedOne(&$collection, $options) {
+	protected function _embedHasOne(&$collection, $options) {
 		$keys = $this->key();
 		$formKey = key($keys);
 		$toKey = current($keys);
@@ -555,7 +561,10 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 		$indexes = [];
 		foreach ($collection as $key => $entity) {
 			$id = is_object($entity) ? $entity->{$name} : $entity[$name];
-			$indexes[(string) $id] = $key;
+			$id = (string) (is_object($entity) ? $entity->{$name} : $entity[$name]);
+			if ($id !== '') {
+				$indexes[$id] = $key;
+			}
 		}
 		return $indexes;
 	}

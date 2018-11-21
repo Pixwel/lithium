@@ -101,6 +101,7 @@ class PhpExtensions {
 	 */
 	protected static function _ini(array $data) {
 		foreach ($data as $ini) {
+			printf("echo %s >> %s", $ini, php_ini_loaded_file());
 			static::_system(sprintf("echo %s >> %s", $ini, php_ini_loaded_file()));
 		}
 	}
@@ -164,8 +165,13 @@ class PhpExtensions {
 class ComposerPackages {
 
 	public static function install($package) {
+		if (!trim($package)) {
+			return;
+		}
 		$return = 0;
-		system($command = "composer require {$package}", $return);
+		$command = "composer require {$package}";
+		echo $command;
+		system($command, $return);
 
 		if (0 !== $return) {
 			printf("=> Command '%s' failed !", $command);

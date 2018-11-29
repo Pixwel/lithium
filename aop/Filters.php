@@ -222,13 +222,14 @@ class Filters {
 	 * @param string $method The method name i.e. `'bar'`.
 	 * @param array $params
 	 * @param callable $implementation
+	 * @param array $filters Additional filters to apply to the method for this call only.
 	 * @return mixed The result of running the chain.
 	 */
-	public static function run($class, $method, array $params, $implementation) {
-		if (!static::hasApplied($class, $method)) {
+	public static function run($class, $method, array $params, $implementation, array $filters = []) {
+		if (!static::hasApplied($class, $method) && !$filters) {
 			return $implementation($params);
 		}
-		return static::_chain($class, $method)->run($params, $implementation);
+		return static::_chain($class, $method, $filters)->run($params, $implementation);
 	}
 
 	/**
@@ -310,15 +311,15 @@ class Filters {
 	 * @see lithium\aop\Chain
 	 * @param string|object $class Fully namespaced class name or an instance of a class.
 	 * @param string $method The method name i.e. `'bar'`.
+	 * @param array $filters Additional filters to apply to the method for this call only.
 	 * @return \lithium\aop\Chain
 	 */
-	protected static function _chain($class, $method) {
+	protected static function _chain($class, $method, array $filters = []) {
 		$ids = static::_ids($class, $method);
 
 		if (isset(static::$_chains[$ids[0]])) {
 			return static::$_chains[$ids[0]];
 		}
-		$filters = [];
 
 		foreach ($ids as $id) {
 			if (isset(static::$_filters[$id])) {

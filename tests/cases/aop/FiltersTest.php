@@ -42,6 +42,27 @@ class FiltersTest extends \lithium\test\Unit {
 		$this->assertEqual($expected, $result);
 	}
 
+	public function testApplyAndRunWithAdditionnalFilters() {
+		$params = ['message' => 'This '];
+
+		$result = Filters::run('foo\Bar', __FUNCTION__, $params, function($params) {
+			return $params['message'] . 'of the ' . get_class($this) . ' class.';
+		}, [
+			function($params, $next) {
+				$params['message'] .= 'is a filter chain ';
+				return $next($params);
+			},
+			function($params, $next) {
+				$params['message'] .= 'in a method ';
+				return $next($params);
+			}
+		]);
+
+		$expected = 'This is a filter chain in a method of the';
+		$expected .= ' lithium\tests\cases\aop\FiltersTest class.';
+		$this->assertEqual($expected, $result);
+	}
+
 	public function testApplyWithLeadingNamespaceBackslash() {
 		Filters::apply('\\' . 'foo\Bar', __FUNCTION__, function($params, $next) {
 			return $next($params) . 'bar';

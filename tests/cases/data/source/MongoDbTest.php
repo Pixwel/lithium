@@ -70,8 +70,8 @@ class MongoDbTest extends \lithium\test\Unit {
 		Connections::add('mockconn', ['object' => $this->_db]);
 		MockMongoPost::config(['meta' => ['key' => '_id', 'connection' => 'mockconn']]);
 
-		$type = 'create';
-		$this->_query = new Query(compact('model', 'type') + [
+		$this->_query = new Query([
+			'type' => 'create',
 			'entity' => new Document(['model' => $this->_model])
 		]);
 	}
@@ -736,7 +736,7 @@ class MongoDbTest extends \lithium\test\Unit {
 
 		$fields = ['updated' => ['type' => 'MongoDB\BSON\UTCDateTime']];
 		$schema = new Schema(compact('fields'));
-		$entity = new Document(compact('data', 'schema', 'model') + ['exists' => true]);
+		$entity = new Document(compact('data', 'schema') + ['exists' => true]);
 		$entity->updated = time();
 		$entity->list[] = 'dib';
 

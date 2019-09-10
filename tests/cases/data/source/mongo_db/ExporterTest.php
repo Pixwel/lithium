@@ -514,7 +514,7 @@ class ExporterTest extends \lithium\test\Unit {
 		$this->assertIdentical(false, $doc->sub->foo);
 
 		$data = ['sub.foo' => '1', 'bar' => '0'];
-		$doc = new Document(compact('data', 'model', 'schema'));
+		$doc = new Document(compact('data', 'model'));
 
 		$this->assertIdentical(false, $doc->bar);
 		$this->assertIdentical(true, $doc->sub->foo);

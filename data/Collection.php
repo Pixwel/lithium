@@ -349,7 +349,9 @@ abstract class Collection extends \lithium\util\Collection implements \Serializa
 		$this->_valid = key($this->_data) !== null;
 
 		if (!$this->_valid) {
-			$this->_valid = $this->_populate() !== null;
+			if ($this->_valid = $this->_populate() !== null) {
+				end($this->_data);
+			}
 		}
 		return current($this->_data);
 	}

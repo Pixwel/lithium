@@ -250,6 +250,8 @@ class MongoDb extends \lithium\data\Source {
 	 *          before timing out and throwing an exception. Defaults to `100`.
 	 *        - `'schema'` _\Closure_: A closure or anonymous function which returns the schema
 	 *          information for a model class. See the `$_schema` property for more information.
+	 *        - `'uriOptions'` _array_: https://www.php.net/manual/fr/mongodb-driver-manager.construct.php
+	 *        - `'driverOptions'` _array_: https://www.php.net/manual/fr/mongodb-driver-manager.construct.php
 	 *
 	 *        Disables auto-connect, which is by default enabled in `Source`. Instead before
 	 *        each query execution the connection is checked and if needed (re-)established.
@@ -271,10 +273,7 @@ class MongoDb extends \lithium\data\Source {
 				'readPreference' => 'primary',
 				'readPreferenceTags' => [],
 			],
-			'driverOptions' => [
-				'allow_invalid_hostname' => false,
-				'weak_cert_validation' => false
-			]
+			'driverOptions' => []
 		];
 		$config = Set::merge($defaults, $config);
 		if (!isset($config['uriOptions']['connectTimeoutMS']) && $config['timeout']) {

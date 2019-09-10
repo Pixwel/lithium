@@ -761,7 +761,7 @@ class MongoDb extends \lithium\data\Source {
 	 */
 	public function relationship($class, $type, $name, array $config = []) {
 		$fieldName = $this->relationFieldName($type, $name);
-		$config += compact('name', 'type', 'key', 'fieldName');
+		$config += compact('name', 'type', 'fieldName');
 		$config['from'] = $class;
 
 		return Libraries::instance(null, 'relationship', $config + [

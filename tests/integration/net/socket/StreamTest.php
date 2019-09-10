@@ -19,7 +19,7 @@ class StreamTest extends \lithium\test\Integration {
 		'scheme' => 'http',
 		'host' => 'example.org',
 		'port' => 80,
-		'timeout' => 2,
+		'timeout' => 30,
 		'classes' => [
 			'request' => 'lithium\net\http\Request',
 			'response' => 'lithium\net\http\Response'

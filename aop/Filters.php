@@ -113,15 +113,6 @@ class Filters {
 	protected static $_filters = [];
 
 	/**
-	 * Holds `Chain` objects keyed by their primary class and method id.
-	 *
-	 * @see lithium\aop\Filters::_ids()
-	 * @see lithium\aop\Filters::_chain()
-	 * @array
-	 */
-	protected static $_chains = [];
-
-	/**
 	 * Lazily applies a filter to a method.
 	 *
 	 * Classes aliased via `class_alias()` are treated as entirely separate from
@@ -154,10 +145,6 @@ class Filters {
 			static::$_filters[$id] = [];
 		}
 		static::$_filters[$id][] = $filter;
-
-		if (isset(static::$_chains[$id])) {
-			unset(static::$_chains[$id]);
-		}
 	}
 
 	/**
@@ -256,7 +243,7 @@ class Filters {
 	 */
 	public static function clear($class = null, $method = null) {
 		if ($class === null && $method === null) {
-			static::$_filters = static::$_chains = [];
+			static::$_filters = [];
 			return;
 		}
 
@@ -270,9 +257,6 @@ class Filters {
 		}
 		foreach (preg_grep("/{$regex}/", array_keys(static::$_filters)) as $id) {
 			unset(static::$_filters[$id]);
-		}
-		foreach (preg_grep("/{$regex}/", array_keys(static::$_chains)) as $id) {
-			unset(static::$_chains[$id]);
 		}
 	}
 
@@ -317,16 +301,12 @@ class Filters {
 	protected static function _chain($class, $method, array $filters = []) {
 		$ids = static::_ids($class, $method);
 
-		if (isset(static::$_chains[$ids[0]])) {
-			return static::$_chains[$ids[0]];
-		}
-
 		foreach ($ids as $id) {
 			if (isset(static::$_filters[$id])) {
 				$filters = array_merge(static::$_filters[$id], $filters);
 			}
 		}
-		return static::$_chains[$ids[0]] = new Chain(compact('class', 'method', 'filters'));
+		return new Chain(compact('class', 'method', 'filters'));
 	}
 }
 

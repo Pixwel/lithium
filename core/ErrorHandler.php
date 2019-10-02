@@ -9,6 +9,7 @@
 
 namespace lithium\core;
 
+use Throwable;
 use Exception;
 use ErrorException;
 use lithium\aop\Filters;
@@ -244,7 +245,7 @@ class ErrorHandler extends \lithium\core\StaticObjectDeprecated {
 
 			try {
 				return $next($params);
-			} catch (Exception $e) {
+			} catch (Throwable $e) {
 				if (!static::matches($e, $conditions)) {
 					throw $e;
 				}

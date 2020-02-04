@@ -102,6 +102,13 @@ class MongoDb extends \lithium\data\Source {
 	public $manager = null;
 
 	/**
+	 * The Session class instance.
+	 *
+	 * @var object
+	 */
+	public $session = null;
+
+	/**
 	 * Classes used by this class.
 	 *
 	 * @var array
@@ -333,6 +340,8 @@ class MongoDb extends \lithium\data\Source {
 			$this->_config['driverOptions']
 		);
 
+		$this->session = $this->manager->startSession();
+
 		$this->_operators += [
 			'like' => function($key, $value) {
 				return new Regex($value);
@@ -538,8 +547,9 @@ class MongoDb extends \lithium\data\Source {
 			$insertQuery->insert($data['create']);
 
 			try {
+				$session = $this->session();
 				$writeConcern = new WriteConcern($options['w'], $options['wTimeoutMS'], $options['journal']);
-				$this->manager->executeBulkWrite("{$this->_config['database']}.{$source}", $insertQuery, $writeConcern);
+				$this->manager->executeBulkWrite("{$this->_config['database']}.{$source}", $insertQuery, compact('writeConcern', 'session'));
 
 				if ($query->entity()) {
 					$query->entity()->sync($data['create']['_id']);
@@ -589,8 +599,9 @@ class MongoDb extends \lithium\data\Source {
 				'skip' => $args['offset']
 			]);
 
+			$session = $this->session;
 			$readPreference = new ReadPreference($options['readPreference'], $options['readPreferenceTags']);
-			$resource = $this->manager->executeQuery("{$this->_config['database']}.{$source}", $readQuery, $readPreference);
+			$resource = $this->manager->executeQuery("{$this->_config['database']}.{$source}", $readQuery, compact('readPreference', 'session'));
 
 			$result = Libraries::instance(null, 'result', compact('resource'), $this->_classes);
 
@@ -665,8 +676,9 @@ class MongoDb extends \lithium\data\Source {
 			]);
 
 			try {
+				$session = $this->session;
 				$writeConcern = new WriteConcern($options['w'], $options['wTimeoutMS'], $options['journal']);
-				$this->manager->executeBulkWrite("{$this->_config['database']}.{$source}", $updateQuery, $writeConcern);
+				$this->manager->executeBulkWrite("{$this->_config['database']}.{$source}", $updateQuery, compact('writeConcern', 'session'));
 				$query->entity() ? $query->entity()->sync() : null;
 				return true;
 			} catch (BulkWriteException $e) {
@@ -705,8 +717,9 @@ class MongoDb extends \lithium\data\Source {
 			$deleteQuery->delete($conditions, ['limit' => $options['justOne']]);
 
 			try {
+				$session = $this->session;
 				$writeConcern = new WriteConcern($options['w'], $options['wTimeoutMS'], $options['journal']);
-				$this->manager->executeBulkWrite("{$this->_config['database']}.{$source}", $deleteQuery, $writeConcern);
+				$this->manager->executeBulkWrite("{$this->_config['database']}.{$source}", $deleteQuery, compact('writeConcern', 'session'));
 				if ($query->entity()) {
 					$query->entity()->sync(null, [], ['dematerialize' => true]);
 				}
@@ -739,11 +752,12 @@ class MongoDb extends \lithium\data\Source {
 				}
 				$pipeline[] = ['$group' => ['_id' => null, 'count' => ['$sum' => 1]]];
 
+				$session = $this->session;
 				$result = $this->manager->executeCommand($this->_config['database'], new Command([
 					'aggregate' => $args['source'],
 					'pipeline' => $pipeline,
 					'cursor' => new stdClass,
-				]))->toArray();
+				]), compact('session'))->toArray();
 
 				return (!empty($result)) ? current($result)->count : 0;
 		}

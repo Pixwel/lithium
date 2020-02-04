@@ -231,7 +231,7 @@ class MongoDb extends \lithium\data\Source {
 		}
 		$features = [
 			'arrays' => true,
-			'transactions' => false,
+			'transactions' => true,
 			'booleans' => true,
 			'relationships' => true,
 			'schema' => false,
@@ -547,7 +547,7 @@ class MongoDb extends \lithium\data\Source {
 			$insertQuery->insert($data['create']);
 
 			try {
-				$session = $this->session();
+				$session = $this->session;
 				$writeConcern = new WriteConcern($options['w'], $options['wTimeoutMS'], $options['journal']);
 				$this->manager->executeBulkWrite("{$this->_config['database']}.{$source}", $insertQuery, compact('writeConcern', 'session'));
 

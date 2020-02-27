@@ -477,10 +477,12 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 			if (is_object($source)) {
 				$list = $source->{$formKey};
 				$source->{$fieldName} = [];
-				foreach ($list as $id) {
-					$id = (string) $id;
-					if (isset($indexes[$id])) {
-						$source->{$fieldName}[] = $related[$indexes[$id]];
+				if (is_array($list) || $list instanceof Traversable) {
+					foreach ($list as $id) {
+						$id = (string) $id;
+						if (isset($indexes[$id])) {
+							$source->{$fieldName}[] = $related[$indexes[$id]];
+						}
 					}
 				}
 			} else {

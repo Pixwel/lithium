@@ -725,7 +725,7 @@ class Model extends \lithium\core\StaticObjectDeprecated {
 				if (isset($options['return']) && $options['return'] === 'array') {
 					$data = is_array($data) ? reset($data) : $data;
 				} else {
-					$data = is_object($data) ? $data->rewind() : $data;
+					$data = is_object($data) ? $data->getRewind() : $data;
 				}
 				return $data ?: null;
 			},

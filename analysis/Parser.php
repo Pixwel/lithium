@@ -123,7 +123,7 @@ class Parser extends \lithium\core\StaticObjectDeprecated {
 
 			if (empty($patternMatch)) {
 				$prev = $tokens->prev();
-				$tokens->next();
+				$tokens->getNext();
 			} else {
 				$prev = reset($patternMatch);
 			}
@@ -142,7 +142,7 @@ class Parser extends \lithium\core\StaticObjectDeprecated {
 
 			if (empty($patternMatch)) {
 				$prev = $tokens->prev();
-				$tokens->next();
+				$tokens->getNext();
 				if ($options['startOfLine'] && $token['line'] === $prev['line']) {
 					$patternMatch = $matches = [];
 					return false;
@@ -163,13 +163,13 @@ class Parser extends \lithium\core\StaticObjectDeprecated {
 
 		$executors = [
 			'*' => function(&$tokens, &$pattern) use ($options, $capture) {
-				$closing = $pattern->next();
+				$closing = $pattern->getNext();
 				$tokens->prev();
 
-				while (($t = $tokens->next()) && !Parser::matchToken($closing, $t)) {
+				while (($t = $tokens->getNext()) && !Parser::matchToken($closing, $t)) {
 					$capture($t);
 				}
-				$pattern->next();
+				$pattern->getNext();
 			}
 		];
 
@@ -194,7 +194,7 @@ class Parser extends \lithium\core\StaticObjectDeprecated {
 
 			switch (true) {
 				case (static::matchToken($p, $t)):
-					$capture($t) ? $pattern->next() : $pattern->rewind();
+					$capture($t) ? $pattern->getNext() : $pattern->getRewind();
 				break;
 				case (isset($executors[$p['name']])):
 					$exec = $executors[$p['name']];
@@ -205,7 +205,7 @@ class Parser extends \lithium\core\StaticObjectDeprecated {
 					$pattern->rewind();
 				break;
 			}
-			$tokens->next();
+			$tokens->getNext();
 		}
 		return $results;
 	}

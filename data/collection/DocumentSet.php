@@ -142,6 +142,14 @@ class DocumentSet extends \lithium\data\Collection {
 		}
 		return $data;
 	}
+
+	public function __serialize() {
+
+	}
+
+	public function __unserialize(array $data) {
+
+	}
 }
 
 ?>

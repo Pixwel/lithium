@@ -305,7 +305,7 @@ class Collection extends \lithium\core\ObjectDeprecated implements \ArrayAccess,
 	 */
 	public function first($filter = null) {
 		if (!$filter) {
-			return $this->rewind();
+			return $this->getRewind();
 		}
 		foreach ($this as $item) {
 			if ($filter($item)) {

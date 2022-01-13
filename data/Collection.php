@@ -354,11 +354,6 @@ abstract class Collection extends \lithium\util\Collection implements \Serializa
 			$this->rewind();
 		}
 		next($this->_data);
-	}
-
-	public function getNext(): mixed {
-		$this->next();
-
 		$this->_valid = key($this->_data) !== null;
 
 		if (!$this->_valid) {
@@ -366,6 +361,11 @@ abstract class Collection extends \lithium\util\Collection implements \Serializa
 				end($this->_data);
 			}
 		}
+	}
+
+	public function getNext(): mixed {
+		$this->next();
+
 		return current($this->_data);
 	}
 

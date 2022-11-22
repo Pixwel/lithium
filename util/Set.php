@@ -254,14 +254,6 @@ class Set {
 	 * @return array An array of matched items.
 	 */
 	public static function extract(array $data, $path = null, array $options = []) {
-		$defaults = ['flatten' => true];
-		$options += $defaults;
-
-		if (!$options['flatten']) {
-			$message = 'Non-flatten mode in `Set::extract()` has been deprecated.';
-			trigger_error($message, E_USER_DEPRECATED);
-		}
-
 		if (!$data) {
 			return [];
 		}
@@ -387,7 +379,7 @@ class Set {
 		foreach ($matches as $match) {
 			$key = array_pop($match['trace']);
 			$condition = (!is_int($key) && $key !== null);
-			if ((!$options['flatten'] || is_array($match['item'])) && $condition) {
+			if ((is_array($match['item'])) && $condition) {
 				$r[] = [$key => $match['item']];
 			} else {
 				$r[] = $match['item'];
@@ -398,7 +390,7 @@ class Set {
 
 	/**
 	 * Collapses a multi-dimensional array into a single dimension, using a delimited array path
-	 * for each array element's key, i.e. [array('Foo' => ['Bar' => 'Far'])] becomes
+	 * for each array element's key, i.e. [['Foo' => ['Bar' => 'Far']]] becomes
 	 * ['0.Foo.Bar' => 'Far'].
 	 *
 	 * @param array $data array to flatten
@@ -450,6 +442,10 @@ class Set {
 			}
 			list($path, $key) = explode($options['separator'], $key, 2);
 			$path = is_numeric($path) ? (integer) $path : $path;
+
+			if (!isset($result[$path]) || !is_array($result[$path])) {
+				$result[$path] = [];
+			}
 			$result[$path][$key] = $val;
 		}
 		foreach ($result as $key => $value) {

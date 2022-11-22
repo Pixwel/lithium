@@ -10,13 +10,16 @@
 namespace lithium\net\http;
 
 use lithium\core\Libraries;
+use lithium\core\AutoConfigurable;
 use lithium\core\ClassNotFoundException;
 
 /**
  * Basic Http Service.
  *
  */
-class Service extends \lithium\core\ObjectDeprecated {
+class Service {
+
+	use AutoConfigurable;
 
 	/**
 	 * The `Socket` instance used to send `Service` calls.
@@ -95,7 +98,8 @@ class Service extends \lithium\core\ObjectDeprecated {
 			'encoding'   => 'UTF-8',
 			'socket'     => 'Context'
 		];
-		parent::__construct($config + $defaults);
+		$this->_autoConfig($config + $defaults, $this->_autoConfig);
+		$this->_autoInit($config);
 	}
 
 	/**
@@ -127,7 +131,7 @@ class Service extends \lithium\core\ObjectDeprecated {
 	 */
 	public function __call($method, $params = []) {
 		array_unshift($params, $method);
-		return call_user_func_array(array($this, 'send'), $params);
+		return call_user_func_array([$this, 'send'], $params);
 	}
 
 	/**

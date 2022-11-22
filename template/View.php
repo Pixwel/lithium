@@ -11,6 +11,7 @@ namespace lithium\template;
 
 use lithium\aop\Filters;
 use lithium\core\Libraries;
+use lithium\core\AutoConfigurable;
 use lithium\template\TemplateException;
 
 /**
@@ -76,7 +77,9 @@ use lithium\template\TemplateException;
  * @see lithium\template\view\adapter
  * @see lithium\net\http\Media
  */
-class View extends \lithium\core\ObjectDeprecated {
+class View {
+
+	use AutoConfigurable;
 
 	/**
 	 * Output filters for view rendering.
@@ -161,8 +164,8 @@ class View extends \lithium\core\ObjectDeprecated {
 	 *
 	 * - `'capture'` _array_: If specified, allows the results of this rendering step to be assigned
 	 *   to a template variable used in subsequent steps, or to the templating context for use in
-	 *   subsequent steps. If can be specified in the form of `array('context' => '<var-name>')` or
-	 *   `array('data' => '<var-name>')`. If the `'context'` key is used, the results are captured
+	 *   subsequent steps. If can be specified in the form of `['context' => '<var-name>']` or
+	 *   `['data' => '<var-name>']`. If the `'context'` key is used, the results are captured
 	 *   to the rendering context. Likewise with the `'data'` key, results are captured to a
 	 *   template variable.
 	 *
@@ -232,7 +235,8 @@ class View extends \lithium\core\ObjectDeprecated {
 			'processes' => [],
 			'outputFilters' => []
 		];
-		parent::__construct($config + $defaults);
+		$this->_autoConfig($config + $defaults, $this->_autoConfig);
+		$this->_autoInit($config);
 	}
 
 	/**
@@ -244,8 +248,6 @@ class View extends \lithium\core\ObjectDeprecated {
 	 * @return void
 	 */
 	protected function _init() {
-		parent::_init();
-
 		$encoding = 'UTF-8';
 
 		if ($this->_response) {

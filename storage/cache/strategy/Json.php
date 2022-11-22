@@ -12,7 +12,7 @@ namespace lithium\storage\cache\strategy;
 /**
  * A JSON encoder/decoder strategy.
  */
-class Json extends \lithium\core\ObjectDeprecated {
+class Json {
 
 	/**
 	 * Write strategy method.
@@ -37,7 +37,7 @@ class Json extends \lithium\core\ObjectDeprecated {
 	 * @return mixed Result of unserialization.
 	 */
 	public function read($data) {
-		return json_decode($data, true);
+		return json_decode($data ?? '', true);
 	}
 }
 

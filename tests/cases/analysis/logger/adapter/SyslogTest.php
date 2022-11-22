@@ -12,13 +12,21 @@ namespace lithium\tests\cases\analysis\logger\adapter;
 use lithium\analysis\Logger;
 use lithium\analysis\logger\adapter\Syslog;
 
+class MockSyslog extends Syslog {
+	public function config() {
+		return $this->_config;
+	}
+}
+
 /**
  * Syslog adapter test.
  */
 class SyslogTest extends \lithium\test\Unit {
 
+	public $syslog;
+
 	public function setUp() {
-		$this->syslog = new Syslog();
+		$this->syslog = new MockSyslog();
 		Logger::config(['syslog' => ['adapter' => $this->syslog]]);
 	}
 
@@ -33,12 +41,11 @@ class SyslogTest extends \lithium\test\Unit {
 			'identity' => false,
 			'options' => LOG_ODELAY,
 			'facility' => LOG_USER,
-			'init' => true
 		];
-		$result = $this->syslog->_config;
+		$result = $this->syslog->config();
 		$this->assertEqual($expected, $result);
 
-		$syslog = new Syslog([
+		$syslog = new MockSyslog([
 			'identity' => 'SyslogTest',
 			'priority' => LOG_DEBUG
 		]);
@@ -46,10 +53,9 @@ class SyslogTest extends \lithium\test\Unit {
 			'identity' => 'SyslogTest',
 			'options' => LOG_ODELAY,
 			'facility' => LOG_USER,
-			'priority' => LOG_DEBUG,
-			'init' => true
+			'priority' => LOG_DEBUG
 		];
-		$result = $syslog->_config;
+		$result = $syslog->config();
 		$this->assertEqual($expected, $result);
 	}
 

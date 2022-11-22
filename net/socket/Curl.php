@@ -38,6 +38,8 @@ class Curl extends \lithium\net\Socket {
 	 */
 	public $options = [];
 
+	protected $_isConnected = false;
+
 	/**
 	 * Constructor.
 	 *
@@ -78,7 +80,7 @@ class Curl extends \lithium\net\Socket {
 			CURLOPT_RETURNTRANSFER => true
 		]);
 
-		if (!is_resource($this->_resource)) {
+		if (!is_object($this->_resource)) {
 			return false;
 		}
 		$this->_isConnected = true;
@@ -96,11 +98,9 @@ class Curl extends \lithium\net\Socket {
 	 * @return boolean True on closed connection
 	 */
 	public function close() {
-		if (!is_resource($this->_resource)) {
-			return true;
-		}
-		curl_close($this->_resource);
-		return !is_resource($this->_resource);
+		unset($this->_resource);
+		$this->_resource = null;
+		return true;
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Curl extends \lithium\net\Socket {
 	 *         of `curl_exec` otherwise.
 	 */
 	public function read() {
-		if (!is_resource($this->_resource)) {
+		if (!is_object($this->_resource)) {
 			return false;
 		}
 		return curl_exec($this->_resource);
@@ -134,7 +134,7 @@ class Curl extends \lithium\net\Socket {
 	 * @return boolean
 	 */
 	public function write($data = null) {
-		if (!is_resource($this->_resource)) {
+		if (!is_object($this->_resource)) {
 			return false;
 		}
 		if (!is_object($data)) {
@@ -176,7 +176,7 @@ class Curl extends \lithium\net\Socket {
 	 *         option could not be set, true otherwise.
 	 */
 	public function timeout($time) {
-		if (!is_resource($this->_resource)) {
+		if (!is_object($this->_resource)) {
 			return false;
 		}
 		return curl_setopt($this->_resource, CURLOPT_CONNECTTIMEOUT, $time);

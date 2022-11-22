@@ -14,6 +14,7 @@ use Countable;
 use Traversable;
 use lithium\util\Set;
 use lithium\core\Libraries;
+use lithium\core\AutoConfigurable;
 use lithium\core\ConfigException;
 use lithium\core\ClassNotFoundException;
 
@@ -21,7 +22,9 @@ use lithium\core\ClassNotFoundException;
  * The `Relationship` class encapsulates the data and functionality necessary to link two model
  * classes together.
  */
-class Relationship extends \lithium\core\ObjectDeprecated {
+class Relationship {
+
+	use AutoConfigurable;
 
 	/**
 	 * Class dependencies.
@@ -129,7 +132,8 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 		if (!$config['to'] && !$config['name']) {
 			throw new ConfigException("`'to'` and `'name'` options can't both be empty.");
 		}
-		parent::__construct($config);
+		$this->_autoConfig($config, []);
+		$this->_autoInit($config);
 	}
 
 	/**
@@ -137,7 +141,6 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 	 * that were not provided in the constructor configuration.
 	 */
 	protected function _init() {
-		parent::_init();
 		$config =& $this->_config;
 
 		if (!$config['to']) {
@@ -254,24 +257,6 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 	}
 
 	/**
-	 * Determines if a given method can be called.
-	 *
-	 * @deprecated
-	 * @param string $method Name of the method.
-	 * @param boolean $internal Provide `true` to perform check from inside the
-	 *                class/object. When `false` checks also for public visibility;
-	 *                defaults to `false`.
-	 * @return boolean Returns `true` if the method can be called, `false` otherwise.
-	 */
-	public function respondsTo($method, $internal = false) {
-		$message  = '`' . __METHOD__ . '()` has been deprecated. ';
-		$message .= "Use `is_callable([<class>, '<method>'])` instead.";
-		trigger_error($message, E_USER_DEPRECATED);
-
-		return is_callable([$this, $method], true);
-	}
-
-	/**
 	 * Generates an array of relationship key pairs, where the keys are fields on the origin model,
 	 * and values are fields on the lniked model.
 	 */
@@ -283,7 +268,7 @@ class Relationship extends \lithium\core\ObjectDeprecated {
 		$hasType = ($config['type'] === 'hasOne' || $config['type'] === 'hasMany');
 		$related = Libraries::locate('models', $config[$hasType ? 'from' : 'to']);
 
-		if (!class_exists($related)) {
+		if (!$related || !class_exists($related)) {
 			throw new ClassNotFoundException("Related model class '{$related}' not found.");
 		}
 		if (!$related::key()) {

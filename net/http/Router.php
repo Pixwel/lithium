@@ -57,12 +57,12 @@ use lithium\util\Inflector;
  * @see lithium\net\http\Router::parse()
  * @see lithium\net\http\Router::match()
  */
-class Router extends \lithium\core\StaticObjectDeprecated {
+class Router {
 
 	/**
 	 * Contain the configuration of scopes.
 	 *
-	 * @var array of scopes
+	 * @var object Configuration of scopes
 	 */
 	protected static $_scopes = null;
 
@@ -592,15 +592,15 @@ class Router extends \lithium\core\StaticObjectDeprecated {
 	 *
 	 * For example:
 	 * ```
-	 * Router::connect('/{:controller}/{:action}/{:id:[0-9]+}', array(), array(
-	 * 	'persist' => array('controller', 'id')
-	 * ));
+	 * Router::connect('/{:controller}/{:action}/{:id:[0-9]+}', [], [
+	 * 	'persist' => ['controller', 'id']
+	 * ]);
 	 *
 	 * // URLs generated with $request will now have the 'controller' and 'id'
 	 * // parameters copied to new URLs.
-	 * $request = Router::process(new Request(array('url' => 'posts/view/1138')));
+	 * $request = Router::process(new Request(['url' => 'posts/view/1138']));
 	 *
-	 * $params = array('action' => 'edit');
+	 * $params = ['action' => 'edit'];
 	 * $url = Router::match($params, $request); // Returns: '/posts/edit/1138'
 	 * ```
 	 *
@@ -676,7 +676,7 @@ class Router extends \lithium\core\StaticObjectDeprecated {
 	 * Helper function for taking a path string and parsing it into a controller and action array.
 	 *
 	 * @param string $path Path string to parse i.e. `li3_bot.Logs::index` or `Posts::index`.
-	 * @param boolean $context
+	 * @param object $context
 	 * @return array
 	 */
 	protected static function _parseString($path, $context, array $options = []) {
@@ -856,7 +856,7 @@ class Router extends \lithium\core\StaticObjectDeprecated {
 		$match = '@\{:([^:}]+):?((?:[^{]+(?:\{[0-9,]+\})?)*?)\}@S';
 		$fields = ['scheme', 'host'];
 		foreach ($fields as $field) {
-			if (preg_match_all($match, $config[$field], $m)) {
+			if (preg_match_all($match, $config[$field] ?? '', $m)) {
 				$tokens = $m[0];
 				$names = $m[1];
 				$regexs = $m[2];
@@ -928,7 +928,7 @@ class Router extends \lithium\core\StaticObjectDeprecated {
 			$fields = ['scheme', 'host'];
 			foreach ($fields as $field) {
 				$dots = '/(?!\{[^\}]*)\.(?![^\{]*\})/';
-				$pattern[$field] = preg_replace($dots, '\.', $config[$field]);
+				$pattern[$field] = preg_replace($dots, '\.', $config[$field] ?? '');
 				$match = '@\{:([^:}]+):?((?:[^{]+(?:\{[0-9,]+\})?)*?)\}@S';
 				if (preg_match_all($match, $pattern[$field], $m)) {
 					$tokens = $m[0];
@@ -956,7 +956,7 @@ class Router extends \lithium\core\StaticObjectDeprecated {
 	 * Return the unscoped url to route.
 	 *
 	 * @param string $name Scope name.
-	 * @param string $request A `lithium\action\Request` instance .
+	 * @param object $request A `lithium\action\Request` instance .
 	 * @return mixed The url to route, or `false` if the request doesn't match the scope.
 	 */
 	protected static function _parseScope($name, $request) {

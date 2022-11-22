@@ -9,7 +9,7 @@
 
 namespace lithium\test;
 
-use Error;
+use Throwable;
 use Exception;
 use ErrorException;
 use ReflectionClass;
@@ -22,6 +22,7 @@ use lithium\analysis\Debugger;
 use lithium\analysis\Inspector;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use lithium\core\AutoConfigurable;
 
 /**
  * This is the base class for all test cases. Test are performed using an assertion method.
@@ -38,12 +39,14 @@ use RecursiveIteratorIterator;
  *
  * @see lithium\test\Unit::assertException()
  */
-class Unit extends \lithium\core\ObjectDeprecated {
+class Unit {
+
+	use AutoConfigurable;
 
 	/**
 	 * The Reference to a test reporter class.
 	 *
-	 * @var string
+	 * @var object
 	 */
 	protected $_reporter = null;
 
@@ -155,8 +158,7 @@ class Unit extends \lithium\core\ObjectDeprecated {
 	 * @return array
 	 */
 	public function methods() {
-		static $methods;
-		return $methods ?: $methods = array_values(preg_grep('/^test/', get_class_methods($this)));
+		return array_values(preg_grep('/^test/', get_class_methods($this)));
 	}
 
 	/**
@@ -206,7 +208,7 @@ class Unit extends \lithium\core\ObjectDeprecated {
 
 		try {
 			$this->skip();
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->_handleException($e);
 			return $this->_results;
 		}
@@ -471,9 +473,7 @@ class Unit extends \lithium\core\ObjectDeprecated {
 			$closure();
 			$message = sprintf('An exception "%s" was expected but not thrown.', $expected);
 			return $this->assert(false, $message, compact('expected', 'result'));
-		} catch (Exception $e) {
-			// fallthrough
-		} catch (Error $e) {
+		} catch (Throwable $e) {
 			// fallthrough
 		}
 		$class = get_class($e);
@@ -565,7 +565,7 @@ class Unit extends \lithium\core\ObjectDeprecated {
 	public function assertNotPattern($expected, $result, $message = '{:message}') {
 		list($expected, $result) = $this->_normalizeLineEndings($expected, $result);
 		$params = compact('expected', 'result');
-		return $this->assert(!preg_match($expected, $result), $message, $params);
+		return $this->assert(!preg_match($expected, $result ?? ''), $message, $params);
 	}
 
 	/**
@@ -874,7 +874,7 @@ class Unit extends \lithium\core\ObjectDeprecated {
 		$expected += $defaults;
 
 		$headers = ($headers) ?: headers_list();
-		$value = preg_quote(urlencode($expected['value']), '/');
+		$value = preg_quote(rawurlencode($expected['value']), '/');
 
 		$key = explode('.', $expected['key']);
 		$key = (count($key) === 1) ? '[' . current($key) . ']' : ('[' . join('][', $key) . ']');
@@ -883,18 +883,18 @@ class Unit extends \lithium\core\ObjectDeprecated {
 		if (isset($expected['expires'])) {
 			$expectedExpires = strtotime($expected['expires']);
 
-			$expires = gmdate('D, d-M-Y H:i:s \G\M\T', $expectedExpires);
-			$expires = preg_quote($expires, '/');
+			$expires = gmdate('D, d[\- ]M[\- ]Y', $expectedExpires);
+			$expires .= ' ' . gmdate('H:i:s', $expectedExpires) . ' GMT';
 			$maxAge = $expectedExpires - time();
 		} else {
 			$expires = '(?:.+?)';
 			$maxAge = '([0-9]+)';
 		}
 		$path = preg_quote($expected['path'], '/');
-		$pattern  = "/^Set\-Cookie:\s{$expected['name']}$key=$value;";
-		$pattern .= "\sexpires=$expires;";
-		$pattern .= "\sMax-Age=$maxAge;";
-		$pattern .= "\spath=$path/";
+		$pattern  = "/^Set-Cookie:\s{$expected['name']}{$key}={$value};";
+		$pattern .= "\sexpires={$expires};";
+		$pattern .= "\sMax-Age={$maxAge};";
+		$pattern .= "\spath={$path}/";
 		$match = false;
 
 		foreach ($headers as $header) {
@@ -1472,8 +1472,8 @@ class Unit extends \lithium\core\ObjectDeprecated {
 	 * Assert that a class does have a given _static_ attribute.
 	 *
 	 * ```
-	 * $this->assertClassHasStaticAttribute('_methodFilters', '\lithium\core\StaticObjectDeprecated'); // succeeds
-	 * $this->assertClassHasStaticAttribute('foobar', '\lithium\core\StaticObjectDeprecated'); // fails
+	 * $this->assertClassHasStaticAttribute('_methodFilters', '\my_app\SomeClass');
+	 * $this->assertClassHasStaticAttribute('foobar', '\my_app\SomeClass');
 	 * ```
 	 *
 	 * @see lithium\test\Unit::assert()
@@ -1503,8 +1503,8 @@ class Unit extends \lithium\core\ObjectDeprecated {
 	 * Assert that a class does *not* have a given _static_ attribute.
 	 *
 	 * ```
-	 * $this->assertClassNotHasStaticAttribute('foobar', '\lithium\core\StaticObjectDeprecated'); // succeeds
-	 * $this->assertClassNotHasStaticAttribute('_methodFilters', '\lithium\core\StaticObjectDeprecated'); // fails
+	 * $this->assertClassNotHasStaticAttribute('foobar', '\my_app\SomeClass');
+	 * $this->assertClassNotHasStaticAttribute('_methodFilters', '\my_app\SomeClass');
 	 * ```
 	 *
 	 * @see lithium\test\Unit::assert()
@@ -1615,7 +1615,7 @@ class Unit extends \lithium\core\ObjectDeprecated {
 	protected function _runTestMethod($method, $options) {
 		try {
 			$this->setUp();
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->_handleException($e, __LINE__ - 2);
 			return $this->_results;
 		}
@@ -1626,13 +1626,13 @@ class Unit extends \lithium\core\ObjectDeprecated {
 				$method = $params['method'];
 				$lineFlag = __LINE__ + 1;
 				$this->{$method}();
-			} catch (Exception $e) {
+			} catch (Throwable $e) {
 				$this->_handleException($e);
 			}
 		});
 		try {
 			$this->tearDown();
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->_handleException($e, __LINE__ - 2);
 		}
 		return $passed;
@@ -1958,7 +1958,7 @@ class Unit extends \lithium\core\ObjectDeprecated {
 	 *
 	 * @param mixed $expected
 	 * @param mixed $result
-	 * @return array Array with the normalized elements i.e. `array($expected, $result)`.
+	 * @return array Array with the normalized elements i.e. `[$expected, $result]`.
 	 */
 	protected function _normalizeLineEndings($expected, $result) {
 		if (is_string($expected) && is_string($result)) {

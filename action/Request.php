@@ -158,11 +158,11 @@ class Request extends \lithium\net\http\Request {
 	 *        - `'base'` _string_: Defaults to `null`.
 	 *        - `'url'` _string_: Defaults to `null`.
 	 *        - `'data'` _array_: Additional data to use when initializing
-	 *          the request. Defaults to `array()`.
+	 *          the request. Defaults to `[]`.
 	 *        - `'stream'` _resource_: Stream to read from in order to get the message
 	 *          body when method is POST, PUT or PATCH and data is empty. When not provided
 	 *          `php://input` will be used for reading.
-	 *        - `'env'` _array_: Defaults to `array()`.
+	 *        - `'env'` _array_: Defaults to `[]`.
 	 *        - `'globals'` _boolean_: Use global variables for populating
 	 *          the request's environment and data; defaults to `true`.
 	 *        - `'drain'` _boolean_: Enables/disables automatic reading of streams.
@@ -414,7 +414,7 @@ class Request extends \lithium\net\http\Request {
 				$val = $this->env('PLATFORM') === 'CGI';
 			break;
 			case 'HTTP_BASE':
-				$val = preg_replace('/^([^.])*/i', null, $this->env('HTTP_HOST'));
+				$val = preg_replace('/^([^.])*/i', "", $this->env('HTTP_HOST'));
 			break;
 			case 'PHP_AUTH_USER':
 			case 'PHP_AUTH_PW':
@@ -488,7 +488,7 @@ class Request extends \lithium\net\http\Request {
 	 */
 	protected function _parseAccept() {
 		$accept = $this->env('HTTP_ACCEPT');
-		$accept = (preg_match('/[a-z,-]/i', $accept)) ? explode(',', $accept) : ['text/html'];
+		$accept = ($accept && preg_match('/[a-z,-]/i', $accept)) ? explode(',', $accept) : ['text/html'];
 
 		foreach (array_reverse($accept) as $i => $type) {
 			unset($accept[$i]);

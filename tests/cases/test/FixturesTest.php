@@ -48,7 +48,8 @@ class FixturesTest extends \lithium\test\Unit {
 			'fixture_test' => $config
 		]);
 		$callable = Fixtures::adapter('fixture_test');
-		$this->assertEqual($config, $callable->construct[0]);
+		$expected = $config;
+		$this->assertEqual($expected, $callable->construct[0]);
 	}
 
 	public function testCallStatic() {

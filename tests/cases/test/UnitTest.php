@@ -517,7 +517,8 @@ class UnitTest extends \lithium\test\Unit {
 	public function testAssertCookieWithHeaders() {
 		$maxAge = 60;
 		$time = time() + $maxAge;
-		$gmt = gmdate('D, d-M-Y H:i:s \G\M\T', $time);
+		$gmt = gmdate('D, d M Y H:i:s \G\M\T', $time);
+		$est = date('D, d M Y H:i:s \E\S\T', $time - (5 * 60 * 60));
 
 		$headers = [
 			'Set-Cookie: name[key]=value; expires=Tue, 04-May-2010 19:02:36 GMT; Max-Age=12; path=/',
@@ -555,6 +556,7 @@ class UnitTest extends \lithium\test\Unit {
 
 	public function testExceptionCatching() {
 		$test = new MockSkipThrowsExceptionTest();
+		$test->testing = true;
 		$test->run();
 		$expected = 'skip throws exception';
 		$results = $test->results();
@@ -567,6 +569,7 @@ class UnitTest extends \lithium\test\Unit {
 		$this->assertEqual($expected, $results[0]['message']);
 
 		$test = new MockTearDownThrowsExceptionTest();
+		$test->testing = true;
 		$test->run();
 		$expected = 'tearDown throws exception';
 		$results = $test->results();
@@ -578,10 +581,10 @@ class UnitTest extends \lithium\test\Unit {
 		error_reporting(E_ALL);
 
 		$test = new MockErrorHandlingTest();
-
+		$test->enabled = true;
 		$test->run();
 
-		$expected = '/expects exactly 1 parameter/';
+		$expected = '/expects exactly 1/';
 		$results = $test->results();
 		$this->assertPattern($expected, $results[0]['message']);
 

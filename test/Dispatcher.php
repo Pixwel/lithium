@@ -20,7 +20,7 @@ use lithium\core\Environment;
  * This Dispatcher is used exclusively for the purpose of running, organizing and compiling
  * statistics for the built-in Lithium test suite.
  */
-class Dispatcher extends \lithium\core\StaticObjectDeprecated {
+class Dispatcher {
 
 	/**
 	 * Composed classes used by the Dispatcher.
@@ -44,9 +44,7 @@ class Dispatcher extends \lithium\core\StaticObjectDeprecated {
 	 *        - `'filters'`: An array of filters that the test output should be run through.
 	 *        - `'format'`: The format of the template to use, defaults to `'txt'`.
 	 *        - `'reporter'`: The reporter to use.
-	 * @return array A compact array of the title, an array of the results, as well
-	 *         as an additional array of the results after the $options['filters']
-	 *         have been applied.
+	 * @return object A Report object.
 	 * @filter
 	 */
 	public static function run($group = null, array $options = []) {
@@ -86,9 +84,7 @@ class Dispatcher extends \lithium\core\StaticObjectDeprecated {
 	 * @return object Group object constructed with `$data`.
 	 */
 	protected static function _group($data) {
-		return Libraries::instance(
-			'test', static::$_classes['group'], compact('data')
-		);
+		return Libraries::instance('test', static::$_classes['group'], compact('data'));
 	}
 
 	/**
@@ -102,9 +98,7 @@ class Dispatcher extends \lithium\core\StaticObjectDeprecated {
 	 * @return object Group object constructed with the test case or group passed in $options.
 	 */
 	protected static function _report($group, $options) {
-		return Libraries::instance(
-			'test', static::$_classes['report'], compact('group') + $options
-		);
+		return Libraries::instance('test', static::$_classes['report'], compact('group') + $options);
 	}
 }
 

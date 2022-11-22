@@ -13,10 +13,19 @@ use lithium\storage\Cache As CacheStorage;
 use lithium\analysis\Logger;
 use lithium\analysis\logger\adapter\Cache;
 
+class MockCache extends Cache {
+
+	public function config() {
+		return $this->_config;
+	}
+}
+
 /**
  * Tests the "Cache" logger adapter.
  */
 class CacheTest extends \lithium\test\Unit {
+
+	public $cachelog;
 
 	/**
 	 * Sets up and configers the logger and also the cache storage for testing.
@@ -27,7 +36,7 @@ class CacheTest extends \lithium\test\Unit {
 				'adapter' => 'Memory'
 			]
 		]);
-		$this->cachelog = new Cache([
+		$this->cachelog = new MockCache([
 			'key' => 'cachelog_testkey',
 			'config' => 'cachelog'
 		]);
@@ -47,10 +56,9 @@ class CacheTest extends \lithium\test\Unit {
 		$expected = [
 			'config' => "cachelog",
 			'expiry' => CacheStorage::PERSIST,
-			'key' => "cachelog_testkey",
-			'init' => true
+			'key' => "cachelog_testkey"
 		];
-		$result = $this->cachelog->_config;
+		$result = $this->cachelog->config();
 		$this->assertEqual($expected, $result);
 	}
 

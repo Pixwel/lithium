@@ -17,6 +17,8 @@ class MockTest extends \lithium\test\Unit {
 
 	public $request;
 
+	public $classes = [];
+
 	protected $_backup = [];
 
 	protected $_testPath = null;
@@ -51,7 +53,6 @@ class MockTest extends \lithium\test\Unit {
 		$mock = new Mock([
 			'request' => $this->request, 'classes' => $this->classes
 		]);
-		$mock->path = $this->_testPath;
 		$mock->run('mock');
 		$expected = "MockPosts created in tests/mocks/models/MockPosts.php.\n";
 		$result = $mock->response->output;

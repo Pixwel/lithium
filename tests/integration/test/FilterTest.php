@@ -14,6 +14,8 @@ use lithium\test\Report;
 
 class FilterTest extends \lithium\test\Integration {
 
+	public $report;
+
 	/**
 	 * Skip the tests if the xdebug extension is not loaded. The `Coverage`
 	 * filter depends on the extension.
@@ -74,7 +76,7 @@ class FilterTest extends \lithium\test\Integration {
 
 				$result = $report->results['filters'];
 
-				$message = "Filter(s): '" . join(array_keys($filters), ", ") . "'";
+				$message = "Filter(s): '" . join(", ", array_keys($filters)) . "'";
 				$message .= "returned no Coverage results.";
 				$this->assertTrue(isset($result['lithium\test\filter\Coverage']), $message);
 				$percentage = $result['lithium\test\filter\Coverage'];

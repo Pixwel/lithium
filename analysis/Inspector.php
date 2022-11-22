@@ -10,6 +10,7 @@
 namespace lithium\analysis;
 
 use Exception;
+use RuntimeException;
 use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
@@ -79,8 +80,10 @@ class Inspector {
 		if (strpos($identifier, '::')) {
 			return (strpos($identifier, '$') !== false) ? 'property' : 'method';
 		}
-		if (is_readable(Libraries::path($identifier))) {
-			if (class_exists($identifier) && in_array($identifier, get_declared_classes())) {
+		$path = Libraries::path($identifier);
+
+		if ($path && is_readable($path)) {
+			if ($identifier && class_exists($identifier) && in_array($identifier, get_declared_classes())) {
 				return 'class';
 			}
 		}
@@ -400,9 +403,9 @@ class Inspector {
 		if (strpos($data, PHP_EOL) !== false) {
 			$c = explode(PHP_EOL, PHP_EOL . $data);
 		} else {
-			if (!file_exists($data)) {
+			if ($data && !file_exists($data)) {
 				$data = Libraries::path($data);
-				if (!file_exists($data)) {
+				if (!$data || !file_exists($data)) {
 					return null;
 				}
 			}
@@ -435,7 +438,7 @@ class Inspector {
 		$options += $defaults;
 		$class = is_object($class) ? get_class($class) : $class;
 
-		if (!class_exists($class, $options['autoLoad'])) {
+		if (!$class || !class_exists($class, $options['autoLoad'])) {
 			return false;
 		}
 		return class_parents($class);
@@ -518,7 +521,7 @@ class Inspector {
 				'return'      => 'content',
 				'lineBreaks'  => true,
 				'startOfLine' => true,
-				'capture'     => ['T_STRING', 'T_NS_SEPARATOR']
+				'capture'     => ['T_STRING', 'T_NAME_QUALIFIED', 'T_NAME_FULLY_QUALIFIED']
 			]));
 
 			if ($classes) {
@@ -552,6 +555,7 @@ class Inspector {
 		if (!class_exists($class)) {
 			throw new RuntimeException(sprintf('Class `%s` could not be found.', $class));
 		}
+		$class = ltrim($class, "\\");
 		return unserialize(sprintf('O:%d:"%s":0:{}', strlen($class), $class));
 	}
 

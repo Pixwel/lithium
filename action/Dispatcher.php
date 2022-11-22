@@ -33,7 +33,7 @@ use lithium\core\ClassNotFoundException;
  * @see lithium\action\Response
  * @see lithium\action\Controller
  */
-class Dispatcher extends \lithium\core\StaticObjectDeprecated {
+class Dispatcher {
 
 	/**
 	 * Fully-namespaced router class reference.  Class must implement a `parse()` method,
@@ -58,7 +58,7 @@ class Dispatcher extends \lithium\core\StaticObjectDeprecated {
 	 *
 	 * For example, to implement action prefixes (i.e. `admin_index`), set a rule named
 	 * `'admin'`, with a value array containing a modifier key for the `action` element of
-	 * a route, i.e.: `array('action' => 'admin_{:action}')`. Now, if the `'admin'` key is
+	 * a route, i.e.: `['action' => 'admin_{:action}']`. Now, if the `'admin'` key is
 	 * present and not empty in the parameters returned from routing, the value of `'action'`
 	 * will be rewritten per the settings in the rule:
 	 * ```
@@ -251,7 +251,7 @@ class Dispatcher extends \lithium\core\StaticObjectDeprecated {
 			try {
 				return Libraries::instance('controllers', $controller, $options);
 			} catch (ClassNotFoundException $e) {
-				throw new DispatchException("Controller `{$controller}` not found.", null, $e);
+				throw new DispatchException("Controller `{$controller}` not found.", 2001, $e);
 			}
 		});
 	}

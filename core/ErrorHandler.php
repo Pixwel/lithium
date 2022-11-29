@@ -12,7 +12,6 @@ namespace lithium\core;
 use Throwable;
 use Exception;
 use ErrorException;
-use Throwable;
 use lithium\aop\Filters;
 
 /**

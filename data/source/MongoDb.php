@@ -307,8 +307,6 @@ class MongoDb extends \lithium\data\Source {
 
 		$this->_config = Set::merge($this->_config, $this->_formatConfig($this->_config));
 
-		$this->session = $this->manager->startSession();
-
 		$this->_operators += [
 			'like' => function($key, $value) {
 				return new Regex($value);
@@ -348,6 +346,7 @@ class MongoDb extends \lithium\data\Source {
 
 		if ($this->_config['autoConnect'] !== false) {
 			$this->connect();
+			$this->session = $this->manager->startSession();
 		}
 	}
 
@@ -993,7 +992,7 @@ class MongoDb extends \lithium\data\Source {
 			}
 			$current = key($value);
 
-			if (!isset($ops[$current]) && (is_int($current) || $current[0] !== '$')) {
+			if (!isset($ops[$current]) && (is_int($current) || ($current[0] ?? '') !== '$')) {
 				$conditions[$key] = ['$in' => $cast($key, $value)];
 				continue;
 			}

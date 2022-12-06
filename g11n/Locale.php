@@ -255,7 +255,7 @@ class Locale {
 		$result = [];
 		$regex  = "/^\s*(?P<locale>\w\w(?:[-]\w\w)?)(?:;q=(?P<quality>(0|1|0\.\d+)))?\s*$/";
 
-		foreach (explode(',', $request->env('HTTP_ACCEPT_LANGUAGE')) as $part) {
+		foreach (explode(',', $request->env('HTTP_ACCEPT_LANGUAGE') ?? '') as $part) {
 			if (preg_match($regex, $part, $matches)) {
 				$locale = static::canonicalize($matches['locale']);
 				$quality = isset($matches['quality']) ? $matches['quality'] : 1;

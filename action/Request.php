@@ -11,6 +11,7 @@ namespace lithium\action;
 
 use lithium\util\Set;
 use lithium\util\Validator;
+use AllowDynamicProperties;
 
 /**
  * A `Request` object is passed into the `Dispatcher`, and is responsible for identifying and
@@ -26,6 +27,7 @@ use lithium\util\Validator;
  * @see lithium\net\http\Route
  * @see lithium\action\Request::__get()
  */
+#[AllowDynamicProperties]
 class Request extends \lithium\net\http\Request {
 
 	/**

@@ -44,7 +44,7 @@ use lithium\console\Request as ConsoleRequest;
  * @link http://www.rfc-editor.org/rfc/bcp/bcp47.txt
  * @link http://www.iana.org/assignments/language-subtag-registry
  */
-class Locale extends \lithium\core\StaticObjectDeprecated {
+class Locale {
 
 	/**
 	 * Properties for locale tags.
@@ -255,7 +255,7 @@ class Locale extends \lithium\core\StaticObjectDeprecated {
 		$result = [];
 		$regex  = "/^\s*(?P<locale>\w\w(?:[-]\w\w)?)(?:;q=(?P<quality>(0|1|0\.\d+)))?\s*$/";
 
-		foreach (explode(',', $request->env('HTTP_ACCEPT_LANGUAGE')) as $part) {
+		foreach (explode(',', $request->env('HTTP_ACCEPT_LANGUAGE') ?? '') as $part) {
 			if (preg_match($regex, $part, $matches)) {
 				$locale = static::canonicalize($matches['locale']);
 				$quality = isset($matches['quality']) ? $matches['quality'] : 1;

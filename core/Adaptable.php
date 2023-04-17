@@ -29,7 +29,7 @@ use lithium\core\ConfigException;
  *
  * This static class should **never** be called explicitly.
  */
-class Adaptable extends \lithium\core\StaticObjectDeprecated {
+class Adaptable {
 
 	/**
 	 * Must always be re-defined in sub-classes. Can provide initial
@@ -202,7 +202,7 @@ class Adaptable extends \lithium\core\StaticObjectDeprecated {
 	 *         return null if no configuration under the given $name exists.
 	 */
 	public static function enabled($name) {
-		$class = static::_class(static::_config($name), static::$_adapters);
+		$class = static::_class(static::_config($name) ?: ['adapter' => null], static::$_adapters);
 		return $class::enabled();
 	}
 

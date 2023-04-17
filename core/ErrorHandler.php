@@ -24,7 +24,7 @@ use lithium\aop\Filters;
  * Using a series of cascading rules and handlers, it is possible to capture and handle very
  * specific errors and exceptions.
  */
-class ErrorHandler extends \lithium\core\StaticObjectDeprecated {
+class ErrorHandler {
 
 	/**
 	 * Configuration parameters.
@@ -156,7 +156,7 @@ class ErrorHandler extends \lithium\core\StaticObjectDeprecated {
 				return preg_match($config['message'], $info['message']);
 			}
 		];
-		static::$_exceptionHandler = function($exception, $return = false) {
+		static::$_exceptionHandler = function(Throwable $exception, $return = false) {
 			if (ob_get_length()) {
 				ob_end_clean();
 			}
@@ -237,7 +237,7 @@ class ErrorHandler extends \lithium\core\StaticObjectDeprecated {
 	}
 
 	public static function apply($object, array $conditions, $handler) {
-		$conditions = $conditions ?: ['type' => 'Exception'];
+		$conditions = $conditions ?: ['type' => 'Throwable'];
 		list($class, $method) = is_string($object) ? explode('::', $object) : $object;
 
 		Filters::apply($class, $method, function($params, $next) use ($conditions, $handler) {

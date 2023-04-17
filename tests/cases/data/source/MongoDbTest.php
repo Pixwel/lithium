@@ -20,10 +20,14 @@ use lithium\data\model\Query;
 use lithium\data\entity\Document;
 use lithium\tests\mocks\data\MockPost;
 use lithium\tests\mocks\data\MockComment;
-use lithium\tests\mocks\core\MockCallable;
 use lithium\tests\mocks\data\source\MockMongoManager;
-use lithium\tests\mocks\data\source\mongo_db\MockResultResource;
 use lithium\tests\mocks\data\source\MockMongoPost;
+
+class MockMongoDb extends MongoDb {
+	public function config() {
+		return $this->_config;
+	}
+}
 
 class MongoDbTest extends \lithium\test\Unit {
 
@@ -64,16 +68,15 @@ class MongoDbTest extends \lithium\test\Unit {
 	}
 
 	public function setUp() {
-		$this->_db = new MongoDb($this->_testConfig);
+		$this->_db = new MockMongoDb($this->_testConfig);
 		$this->_db->manager = new MockMongoManager();
+		$model = $this->_model;
 
 		Connections::add('mockconn', ['object' => $this->_db]);
 		MockMongoPost::config(['meta' => ['key' => '_id', 'connection' => 'mockconn']]);
 
-		$this->_query = new Query([
-			'type' => 'create',
-			'entity' => new Document(['model' => $this->_model])
-		]);
+		$type = 'create';
+		$this->_query = new Query(compact('model', 'type') + ['entity' => new Document(compact('model'))]);
 	}
 
 	public function tearDown() {
@@ -87,21 +90,22 @@ class MongoDbTest extends \lithium\test\Unit {
 		$config = $this->_testConfig;
 		$config['host'] = '';
 		$this->assertException('lithium\core\ConfigException', function() use ($config) {
-			$db = new MongoDb($config);
+			new MongoDb($config);
 		});
 
 		$config = $this->_testConfig;
 		$config['host'] = null;
 		$this->assertException('lithium\core\ConfigException', function() use ($config) {
-			$db = new MongoDb($config);
+			new MongoDb($config);
 		});
 	}
 
 	public function testConnectInvalidDsn() {
 		$config = $this->_testConfig;
 		$config['dsn'] = 'foobar://user:pass@example.org';
+
 		$this->assertException('lithium\core\ConfigException', function() use ($config) {
-			$db = new MongoDb($config);
+				$db = new MongoDb($config + ['autoConnect' => false]);
 		});
 
 		$config = $this->_testConfig;
@@ -115,11 +119,11 @@ class MongoDbTest extends \lithium\test\Unit {
 		$config = $this->_testConfig;
 		$config['dsn'] = 'mongodb://user:pass@cluster0-shard-00-00-foo.mongodb.net:27017,cluster0-shard-00-01-foo.mongodb.net:27017,cluster0-shard-00-02-foo.mongodb.net:27017/testdb';
 
-		$db = new MongoDb($config);
-		$this->assertEqual($db->_config['login'], 'user');
-		$this->assertEqual($db->_config['password'], 'pass');
-		$this->assertEqual($db->_config['database'], 'testdb');
-		$this->assertEqual($db->_config['host'], [
+		$db = new MockMongoDb($config + ['autoConnect' => false]);
+		$this->assertEqual($db->config()['login'], 'user');
+		$this->assertEqual($db->config()['password'], 'pass');
+		$this->assertEqual($db->config()['database'], 'testdb');
+		$this->assertEqual($db->config()['host'], [
 			'cluster0-shard-00-00-foo.mongodb.net:27017',
 			'cluster0-shard-00-01-foo.mongodb.net:27017',
 			'cluster0-shard-00-02-foo.mongodb.net:27017',
@@ -128,9 +132,9 @@ class MongoDbTest extends \lithium\test\Unit {
 		$config = $this->_testConfig;
 		$config['dsn'] = 'mongodb://cluster0-shard-00-00-foo.mongodb.net:27017,cluster0-shard-00-01-foo.mongodb.net:27017,cluster0-shard-00-02-foo.mongodb.net:27017/testdb';
 
-		$db = new MongoDb($config);
-		$this->assertEqual($db->_config['database'], 'testdb');
-		$this->assertEqual($db->_config['host'], [
+		$db = new MockMongoDb($config + ['autoConnect' => false]);
+		$this->assertEqual($db->config()['database'], 'testdb');
+		$this->assertEqual($db->config()['host'], [
 			'cluster0-shard-00-00-foo.mongodb.net:27017',
 			'cluster0-shard-00-01-foo.mongodb.net:27017',
 			'cluster0-shard-00-02-foo.mongodb.net:27017',
@@ -139,35 +143,35 @@ class MongoDbTest extends \lithium\test\Unit {
 		$config = $this->_testConfig;
 		$config['dsn'] = 'mongodb+srv://user:pass@cluster0-foo.mongodb.net/testdb';
 
-		$db = new MongoDb($config);
-		$this->assertEqual($db->_config['login'], 'user');
-		$this->assertEqual($db->_config['password'], 'pass');
-		$this->assertEqual($db->_config['database'], 'testdb');
-		$this->assertEqual($db->_config['host'], 'cluster0-foo.mongodb.net:27017');
+		$db = new MockMongoDb($config + ['autoConnect' => false]);
+		$this->assertEqual($db->config()['login'], 'user');
+		$this->assertEqual($db->config()['password'], 'pass');
+		$this->assertEqual($db->config()['database'], 'testdb');
+		$this->assertEqual($db->config()['host'], 'cluster0-foo.mongodb.net:27017');
 	}
 
 	public function testConnectHosts() {
 		$config = $this->_testConfig;
 		$config['host'] = ['host1', 'host2:27017', 'host3:27018', ':27019'];
 
-		$db = new MongoDb($config);
-		$this->assertEqual($db->_config['dsn'], 'mongodb://host1:27017,host2:27017,host3:27018,localhost:27019');
+		$db = new MockMongoDb($config);
+		$this->assertEqual($db->config()['dsn'], 'mongodb://host1:27017,host2:27017,host3:27018,localhost:27019');
 	}
 
 	public function testConnectOptions() {
 		$config = $this->_testConfig;
 		$config['dsn'] = 'mongodb://user:pass@cluster0-shard-00-00-foo.mongodb.net:27017,cluster0-shard-00-01-foo.mongodb.net:27017,cluster0-shard-00-02-foo.mongodb.net:27017/testdb?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 
-		$db = new MongoDb($config);
-		$this->assertEqual($db->_config['login'], 'user');
-		$this->assertEqual($db->_config['password'], 'pass');
-		$this->assertEqual($db->_config['database'], 'testdb');
-		$this->assertEqual($db->_config['host'], [
+		$db = new MockMongoDb($config + ['autoConnect' => false]);
+		$this->assertEqual($db->config()['login'], 'user');
+		$this->assertEqual($db->config()['password'], 'pass');
+		$this->assertEqual($db->config()['database'], 'testdb');
+		$this->assertEqual($db->config()['host'], [
 			'cluster0-shard-00-00-foo.mongodb.net:27017',
 			'cluster0-shard-00-01-foo.mongodb.net:27017',
 			'cluster0-shard-00-02-foo.mongodb.net:27017',
 		]);
-		$this->assertEqual($db->_config['uriOptions'], [
+		$this->assertEqual($db->config()['uriOptions'], [
 			'ssl' => true,
 			'replicaSet' => 'Cluster0-shard-0',
 			'authSource' => 'admin',
@@ -183,16 +187,16 @@ class MongoDbTest extends \lithium\test\Unit {
 		$config = $this->_testConfig;
 		$config['dsn'] = 'mongodb://user:pass@cluster0-shard-00-00-foo.mongodb.net:27017,cluster0-shard-00-01-foo.mongodb.net:27017,cluster0-shard-00-02-foo.mongodb.net:27017/testdb?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&connectTimeoutMS=500';
 
-		$db = new MongoDb($config);
-		$this->assertEqual($db->_config['login'], 'user');
-		$this->assertEqual($db->_config['password'], 'pass');
-		$this->assertEqual($db->_config['database'], 'testdb');
-		$this->assertEqual($db->_config['host'], [
+		$db = new MockMongoDb($config + ['autoConnect' => false]);
+		$this->assertEqual($db->config()['login'], 'user');
+		$this->assertEqual($db->config()['password'], 'pass');
+		$this->assertEqual($db->config()['database'], 'testdb');
+		$this->assertEqual($db->config()['host'], [
 			'cluster0-shard-00-00-foo.mongodb.net:27017',
 			'cluster0-shard-00-01-foo.mongodb.net:27017',
 			'cluster0-shard-00-02-foo.mongodb.net:27017',
 		]);
-		$this->assertEqual($db->_config['uriOptions'], [
+		$this->assertEqual($db->config()['uriOptions'], [
 			'w' => 'majority',
 			'wTimeoutMS' => 10000,
 			'journal' => true,
@@ -209,16 +213,16 @@ class MongoDbTest extends \lithium\test\Unit {
 		$config['dsn'] = 'mongodb://user:pass@cluster0-shard-00-00-foo.mongodb.net:27017,cluster0-shard-00-01-foo.mongodb.net:27017,cluster0-shard-00-02-foo.mongodb.net:27017/testdb?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 		$config['uriOptions']['journal'] = false;
 
-		$db = new MongoDb($config);
-		$this->assertEqual($db->_config['login'], 'user');
-		$this->assertEqual($db->_config['password'], 'pass');
-		$this->assertEqual($db->_config['database'], 'testdb');
-		$this->assertEqual($db->_config['host'], [
+		$db = new MockMongoDb($config + ['autoConnect' => false]);
+		$this->assertEqual($db->config()['login'], 'user');
+		$this->assertEqual($db->config()['password'], 'pass');
+		$this->assertEqual($db->config()['database'], 'testdb');
+		$this->assertEqual($db->config()['host'], [
 			'cluster0-shard-00-00-foo.mongodb.net:27017',
 			'cluster0-shard-00-01-foo.mongodb.net:27017',
 			'cluster0-shard-00-02-foo.mongodb.net:27017',
 		]);
-		$this->assertEqual($db->_config['uriOptions'], [
+		$this->assertEqual($db->config()['uriOptions'], [
 			'w' => 'majority',
 			'wTimeoutMS' => 10000,
 			'journal' => false,
@@ -233,7 +237,7 @@ class MongoDbTest extends \lithium\test\Unit {
 	}
 
 	public function testSources() {
-		$this->_db->manager->results = [[(object)['name' => 'images']]];
+		$this->_db->manager->results = [[(object) ['name' => 'images']]];
 		$this->assertEqual(['images'], $this->_db->sources());
 	}
 
@@ -544,7 +548,6 @@ class MongoDbTest extends \lithium\test\Unit {
 			'fields' => true,
 			'fieldName' => 'mockPost',
 			'constraints' => [],
-			'init' => true
 		];
 		$this->assertEqual($expected, $result->data());
 
@@ -591,7 +594,6 @@ class MongoDbTest extends \lithium\test\Unit {
 			'fields' => true,
 			'fieldName' => 'mockPost',
 			'constraints' => [],
-			'init' => true
 		];
 		$this->assertEqual($expected, $result->data());
 	}
@@ -769,7 +771,7 @@ class MongoDbTest extends \lithium\test\Unit {
 
 	public function testSchemaCallback() {
 		$schema = ['_id' => ['type' => 'id'], 'created' => ['type' => 'date']];
-		$db = new MongoDb(['schema' => function() use ($schema) {
+		$db = new MockMongoDb(['schema' => function() use ($schema) {
 			return $schema;
 		}]);
 		$this->assertEqual($schema, $db->describe(null)->fields());

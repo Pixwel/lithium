@@ -15,6 +15,12 @@ use lithium\tests\mocks\storage\session\adapter\MockPhp;
 
 class PhpTest extends \lithium\test\Unit {
 
+	protected $_session;
+
+	protected $_gc_divisor;
+
+	public $php;
+
 	public function setUp() {
 		$this->_session = isset($_SESSION) ? $_SESSION : [];
 		$this->_destroySession();
@@ -69,8 +75,8 @@ class PhpTest extends \lithium\test\Unit {
 		$this->assertNotEmpty((integer) $result);
 
 		$name = 'this-is-a-custom-name';
-		$php = new Php(['session.name' => $name]);
-		$this->assertNotInternalType('numeric', $php->_config['session.name']);
+		$php = new MockPhp(['session.name' => $name]);
+		$this->assertNotInternalType('numeric', $php->config()['session.name']);
 	}
 
 	public function testCustomConfiguration() {

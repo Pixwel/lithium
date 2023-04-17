@@ -300,6 +300,15 @@ abstract class Database extends \lithium\data\Source {
 	}
 
 	/**
+	 * Adapter-specific method for building column definitions. Helper for `Database::column()`
+	 *
+	 * @see lithium\data\Database::column()
+	 * @param array $field A field array.
+	 * @return string The SQL column string.
+	 */
+	abstract protected function _buildColumn($field);
+
+	/**
 	 * Connects to the database by creating a PDO intance using the constructed DSN string.
 	 * Will set general options on the connection as provided (persistence, encoding).
 	 *
@@ -329,14 +338,14 @@ abstract class Database extends \lithium\data\Source {
 			switch (true) {
 				case $code === 'HY000' || substr($code, 0, 2) === '08':
 					$msg = "Unable to connect to host `{$config['host']}`.";
-					throw new NetworkException($msg, null, $e);
+					throw new NetworkException($msg, 3001, $e);
 				break;
 				case in_array($code, ['28000', '42000']):
 					$msg = "Host connected, but could not access database `{$config['database']}`.";
-					throw new ConfigException($msg, null, $e);
+					throw new ConfigException($msg, 3002, $e);
 				break;
 			}
-			throw new ConfigException($e->getMessage(), null, $e);
+			throw new ConfigException($e->getMessage(), 3003, $e);
 		}
 		$this->_isConnected = true;
 
@@ -376,7 +385,7 @@ abstract class Database extends \lithium\data\Source {
 
 		if ($first) {
 			$result = "{$open}{$first}{$close}.{$open}{$second}{$close}";
-		} elseif (preg_match('/^[a-z0-9_-]+$/iS', $name)) {
+		} elseif (preg_match('/^[a-z0-9_-]+$/iS', $name ?? '')) {
 			$result = "{$open}{$name}{$close}";
 		} else {
 			$result = $name;
@@ -394,7 +403,7 @@ abstract class Database extends \lithium\data\Source {
 	protected function _splitFieldname($field) {
 		$regex = '/^([a-z0-9_-]+)\.([a-z 0-9_-]+|\*)$/iS';
 
-		if (strpos($field, '.') !== false && preg_match($regex, $field, $matches)) {
+		if (strpos($field ?? '', '.') !== false && preg_match($regex, $field ?? '', $matches)) {
 			return [$matches[1], $matches[2]];
 		}
 		return [null, $field];
@@ -502,7 +511,7 @@ abstract class Database extends \lithium\data\Source {
 	 */
 	protected function _formatters() {
 		$datetime = $timestamp = $date = $time = function($format, $value) {
-			if ($format && (($time = strtotime($value)) !== false)) {
+			if ($format && $value && (($time = strtotime($value)) !== false)) {
 				$value = date($format, $time);
 			} else {
 				return false;
@@ -1558,9 +1567,9 @@ abstract class Database extends \lithium\data\Source {
 		switch (true) {
 			case (is_bool($value)):
 				return 'boolean';
-			case (is_float($value) || preg_match('/^\d+\.\d+$/', $value)):
+			case (is_float($value) || preg_match('/^\d+\.\d+$/', $value ?? '')):
 				return 'float';
-			case (is_int($value) || preg_match('/^\d+$/', $value)):
+			case (is_int($value) || preg_match('/^\d+$/', $value ?? '')):
 				return 'integer';
 			case (is_string($value) && strlen($value) <= $this->_columns['string']['length']):
 				return 'string';
@@ -1819,6 +1828,7 @@ abstract class Database extends \lithium\data\Source {
 	 */
 	public function createSchema($source, $schema) {
 		if (!$schema instanceof $this->_classes['schema']) {
+			$class = $this->_classes['schema'];
 			throw new InvalidArgumentException("Passed schema is not a valid `{$class}` instance.");
 		}
 
@@ -1916,7 +1926,7 @@ abstract class Database extends \lithium\data\Source {
 	 * Generate a database-native column schema string
 	 *
 	 * @param array $column A field array structured like the following:
-	 *        `array('name' => 'value', 'type' => 'value' [, options])`, where options can
+	 *        `['name' => 'value', 'type' => 'value' [, options]]`, where options can
 	 *        be `'default'`, `'null'`, `'length'` or `'precision'`.
 	 * @return string SQL string
 	 */

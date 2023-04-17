@@ -10,12 +10,15 @@
 namespace lithium\data;
 
 use RuntimeException;
+use lithium\core\AutoConfigurable;
 
 /**
  * This class encapsulates a schema definition, usually for a model class, and is comprised
  * of named fields and types.
  */
-class Schema extends \lithium\core\ObjectDeprecated implements \ArrayAccess {
+class Schema implements \ArrayAccess {
+
+	use AutoConfigurable;
 
 	protected $_fields = [];
 
@@ -36,12 +39,11 @@ class Schema extends \lithium\core\ObjectDeprecated implements \ArrayAccess {
 	 */
 	public function __construct(array $config = []) {
 		$defaults = ['fields' => []];
-		parent::__construct($config + $defaults);
+		$this->_autoConfig($config + $defaults, $this->_autoConfig);
+		$this->_autoInit($config);
 	}
 
 	protected function _init() {
-		parent::_init();
-
 		foreach ($this->_fields as $key => $type) {
 			if (is_string($type)) {
 				$this->_fields[$key] = compact('type');
@@ -162,22 +164,22 @@ class Schema extends \lithium\core\ObjectDeprecated implements \ArrayAccess {
 		$this->_fields += $schema->fields();
 	}
 
-	public function offsetGet($key) {
+	public function offsetGet($key): mixed {
 		return $this->fields($key);
 	}
 
-	public function offsetSet($key, $value) {
+	public function offsetSet($key, $value): void {
 		if ($this->_locked) {
 			throw new RuntimeException("Schema cannot be modified.");
 		}
 		$this->_fields[$key] = $value;
 	}
 
-	public function offsetExists($key) {
+	public function offsetExists($key): bool {
 		return isset($this->_fields[$key]);
 	}
 
-	public function offsetUnset($key) {
+	public function offsetUnset($key): void {
 		unset($this->_fields[$key]);
 	}
 }

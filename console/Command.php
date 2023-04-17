@@ -10,8 +10,9 @@
 namespace lithium\console;
 
 use Exception;
-use lithium\console\command\Help;
 use lithium\core\Libraries;
+use lithium\console\command\Help;
+use lithium\core\AutoConfigurable;
 
 /**
  * All Commands to be run from the Lithium console must extend this class.
@@ -25,7 +26,9 @@ use lithium\core\Libraries;
  * ```
  *
  */
-class Command extends \lithium\core\ObjectDeprecated {
+class Command {
+
+	use AutoConfigurable;
 
 	/**
 	 * A Request object.
@@ -74,13 +77,6 @@ class Command extends \lithium\core\ObjectDeprecated {
 	];
 
 	/**
-	 * Auto configuration.
-	 *
-	 * @var array
-	 */
-	protected $_autoConfig = ['classes' => 'merge'];
-
-	/**
 	 * Constructor.
 	 *
 	 * @param array $config Available configuration options are:
@@ -91,7 +87,8 @@ class Command extends \lithium\core\ObjectDeprecated {
 	 */
 	public function __construct(array $config = []) {
 		$defaults = ['request' => null, 'response' => [], 'classes' => $this->_classes];
-		parent::__construct($config + $defaults);
+		$this->_autoConfig($config + $defaults, ['classes' => 'merge']);
+		$this->_autoInit($config);
 	}
 
 	/**
@@ -104,7 +101,6 @@ class Command extends \lithium\core\ObjectDeprecated {
 	 * @return void
 	 */
 	protected function _init() {
-		parent::_init();
 		$this->request = $this->_config['request'];
 
 		if (!is_object($this->request) || !$this->request->params) {
@@ -114,7 +110,9 @@ class Command extends \lithium\core\ObjectDeprecated {
 		$params = array_diff_key((array) $this->request->params, $default);
 
 		foreach ($params as $key => $param) {
-			$this->{$key} = $param;
+			if (property_exists($this, $key)) {
+				$this->{$key} = $param;
+			}
 		}
 		$this->response = $this->_config['response'];
 
@@ -141,7 +139,7 @@ class Command extends \lithium\core\ObjectDeprecated {
 	public function __invoke($action, $args = []) {
 		try {
 			$this->response->status = 1;
-			$result = call_user_func_array(array($this, $action), $args);
+			$result = call_user_func_array([$this, $action], $args);
 
 			if (is_int($result)) {
 				$this->response->status = $result;

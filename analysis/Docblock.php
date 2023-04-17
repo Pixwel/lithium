@@ -16,7 +16,7 @@ namespace lithium\analysis;
  * a reflection-based API generator, a code metrics analyzer, and various other code or structural
  * analysis tools.
  */
-class Docblock extends \lithium\core\StaticObjectDeprecated {
+class Docblock {
 
 	/**
 	 * List of supported docblock tags.
@@ -51,7 +51,7 @@ class Docblock extends \lithium\core\StaticObjectDeprecated {
 		if (strpos($description, "\n\n")) {
 			list($description, $text) = explode("\n\n", $description, 2);
 		}
-		$text = trim($text);
+		$text = trim($text ?? "");
 		$description = trim($description);
 		return compact('description', 'text', 'tags');
 	}
@@ -68,7 +68,7 @@ class Docblock extends \lithium\core\StaticObjectDeprecated {
 	 */
 	public static function tags($string) {
 		$regex = '/\n@(?P<type>' . join('|', static::$tags) . ")/msi";
-		$string = trim($string);
+		$string = trim($string ?? "");
 
 		$result = preg_split($regex, "\n$string", -1, PREG_SPLIT_DELIM_CAPTURE);
 		$tags = [];

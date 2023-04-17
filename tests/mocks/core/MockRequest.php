@@ -9,7 +9,11 @@
 
 namespace lithium\tests\mocks\core;
 
-class MockRequest extends \lithium\core\ObjectDeprecated {
+use lithium\core\AutoConfigurable;
+
+class MockRequest {
+
+	use AutoConfigurable;
 
 	public $url = null;
 
@@ -17,11 +21,21 @@ class MockRequest extends \lithium\core\ObjectDeprecated {
 
 	public $argv = [];
 
+	public $command;
+
+	public function __isset($key) {
+		return isset($this->params[$key]);
+	}
+
 	public function __get($key) {
 		if (isset($this->params[$key])) {
 			return $this->params[$key];
 		}
 		return null;
+	}
+
+	public function __set($key, $val) {
+		$this->params[$key] = $val;
 	}
 
 	public function env($key) {

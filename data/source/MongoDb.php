@@ -12,6 +12,7 @@ namespace lithium\data\source;
 use stdClass;
 use Exception;
 use MongoDB\Driver\Exception\BulkWriteException;
+use MongoDB\Driver\Exception\InvalidArgumentException;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\Javascript;
 use MongoDB\BSON\Regex;
@@ -280,9 +281,13 @@ class MongoDb extends \lithium\data\Source {
 				'readPreference' => 'primary',
 				'readPreferenceTags' => [],
 			],
-			'driverOptions' => []
+			'driverOptions' => [
+				'tlsAllowInvalidHostnames' => false,
+				'tlsAllowInvalidCertificates' => false
+			]
 		];
 		$config = Set::merge($defaults, $config);
+
 		if (!isset($config['uriOptions']['connectTimeoutMS']) && $config['timeout']) {
 			$config['uriOptions']['connectTimeoutMS'] = $config['timeout'];
 		}
@@ -300,47 +305,7 @@ class MongoDb extends \lithium\data\Source {
 	protected function _init() {
 		parent::_init();
 
-		if (is_string($this->_config['host']) && stristr($this->_config['host'], '://')) {
-			$this->_config['dsn'] = $this->_config['host'];
-		}
-
-		switch (true) {
-			case (!empty($this->_config['dsn'])):
-				$connectionConfig = $this->_parseConnectionString($this->_config['dsn']);
-				$this->_config = Set::merge($this->_config, $connectionConfig);
-				break;
-			case (!$this->_config['host']):
-				throw new ConfigException('No host configured.');
-			default:
-				$hosts = [];
-				foreach ((array) $this->_config['host'] as $host) {
-					$host = HostString::parse($host) + [
-						'host' => static::DEFAULT_HOST,
-						'port' => static::DEFAULT_PORT
-					];
-					$hosts[] = "{$host['host']}:{$host['port']}";
-				}
-				if ((!$this->_config['login'])) {
-					$this->_config['dsn'] = sprintf('mongodb://%s', implode(',', $hosts));
-				} else {
-					$this->_config['dsn'] = sprintf(
-						'mongodb://%s:%s@%s/%s',
-						$this->_config['login'],
-						$this->_config['password'],
-						implode(',', $hosts),
-						$this->_config['database']
-					);
-				}
-		}
-
-		$manager = $this->_classes['manager'];
-		$this->manager = new $manager(
-			$this->_config['dsn'],
-			$this->_config['uriOptions'],
-			$this->_config['driverOptions']
-		);
-
-		$this->session = $this->manager->startSession();
+		$this->_config = Set::merge($this->_config, $this->_formatConfig($this->_config));
 
 		$this->_operators += [
 			'like' => function($key, $value) {
@@ -378,6 +343,47 @@ class MongoDb extends \lithium\data\Source {
 				return ['$elemMatch' => $values];
 			}
 		];
+
+		if ($this->_config['autoConnect'] !== false) {
+			$this->connect();
+			$this->session = $this->manager->startSession();
+		}
+	}
+
+	protected function _formatConfig($config) {
+		$dsn = (is_string($config['host']) && stristr($config['host'], '://'))
+			? $config['host']
+			: $config['dsn'];
+
+		switch (true) {
+			case (!empty($dsn)):
+				return $this->_parseConnectionString($dsn);
+
+			case (!$config['host']):
+				throw new ConfigException('No host configured.');
+
+			default:
+				$hosts = [];
+
+				foreach ((array) $config['host'] as $host) {
+					$host = HostString::parse($host) + [
+						'host' => static::DEFAULT_HOST,
+						'port' => static::DEFAULT_PORT
+					];
+					$hosts[] = "{$host['host']}:{$host['port']}";
+				}
+
+				if ((!$config['login'])) {
+					return ['dsn' => sprintf('mongodb://%s', implode(',', $hosts))];
+				}
+				return ['dsn' => sprintf(
+					'mongodb://%s:%s@%s/%s',
+					$config['login'],
+					$config['password'],
+					implode(',', $hosts),
+					$config['database']
+				)];
+		}
 	}
 
 	/**
@@ -404,6 +410,14 @@ class MongoDb extends \lithium\data\Source {
 	 * @return boolean Returns `true`.
 	 */
 	public function connect() {
+		$manager = $this->_classes['manager'];
+
+		$this->manager = new $manager(
+			$this->_config['dsn'],
+			$this->_config['uriOptions'],
+			$this->_config['driverOptions']
+		);
+
 		return $this->_isConnected = true;
 	}
 
@@ -414,6 +428,7 @@ class MongoDb extends \lithium\data\Source {
 	 */
 	public function disconnect() {
 		unset($this->manager);
+		$this->_isConnected = false;
 		return true;
 	}
 
@@ -478,25 +493,6 @@ class MongoDb extends \lithium\data\Source {
 	 */
 	public function __call($method, $params) {
 		return call_user_func_array([$this->manager, $method], $params);
-	}
-
-	/**
-	 * Determines if a given method can be called.
-	 *
-	 * @deprecated
-	 * @param string $method Name of the method.
-	 * @param boolean $internal Provide `true` to perform check from inside the
-	 *                class/object. When `false` checks also for public visibility;
-	 *                defaults to `false`.
-	 * @return boolean Returns `true` if the method can be called, `false` otherwise.
-	 */
-	public function respondsTo($method, $internal = false) {
-		$message  = '`' . __METHOD__ . '()` has been deprecated. ';
-		$message .= 'Use `is_callable([$adapter->server, \'<method>\'])` instead.';
-		trigger_error($message, E_USER_DEPRECATED);
-
-		$childRespondsTo = is_object($this->manager) && is_callable([$this->manager, $method]);
-		return parent::respondsTo($method, $internal) || $childRespondsTo;
 	}
 
 	/**
@@ -996,7 +992,7 @@ class MongoDb extends \lithium\data\Source {
 			}
 			$current = key($value);
 
-			if (!isset($ops[$current]) && $current[0] !== '$') {
+			if (!isset($ops[$current]) && (is_int($current) || ($current[0] ?? '') !== '$')) {
 				$conditions[$key] = ['$in' => $cast($key, $value)];
 				continue;
 			}

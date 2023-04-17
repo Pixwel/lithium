@@ -18,6 +18,8 @@ class ControllerTest extends \lithium\test\Unit {
 
 	public $request;
 
+	public $classes = [];
+
 	protected $_backup = [];
 
 	protected $_testPath = null;
@@ -83,7 +85,6 @@ class ControllerTest extends \lithium\test\Unit {
 		$controller = new Controller([
 			'request' => $this->request, 'classes' => $this->classes
 		]);
-		$controller->path = $this->_testPath;
 		$controller->run('controller');
 		$expected = "PostsController created in controllers/PostsController.php.\n";
 		$result = $controller->response->output;

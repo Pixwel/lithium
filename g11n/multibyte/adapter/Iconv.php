@@ -18,7 +18,7 @@ namespace lithium\g11n\multibyte\adapter;
  *
  * @link http://php.net/book.iconv.php
  */
-class Iconv extends \lithium\core\ObjectDeprecated {
+class Iconv {
 
 	/**
 	 * Determines if this adapter is enabled by checking if the `iconv` extension is loaded.
@@ -37,7 +37,7 @@ class Iconv extends \lithium\core\ObjectDeprecated {
 	 * @return integer|boolean
 	 */
 	public function strlen($string) {
-		return iconv_strlen($string, 'UTF-8');
+		return iconv_strlen($string ?? '', 'UTF-8');
 	}
 
 	/**

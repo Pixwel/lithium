@@ -9,6 +9,9 @@
 
 namespace lithium\data\source;
 
+use ReturnTypeWillChange;
+use lithium\core\AutoConfigurable;
+
 /**
  * The `Result` class is a wrapper around a forward-only data soure result cursor and can be
  * used to iterate over it.
@@ -38,7 +41,9 @@ namespace lithium\data\source;
  * @link http://php.net/manual/class.iterator.php The Iterator interface.
  * @link http://php.net/manual/norewinditerator.rewind.php
  */
-abstract class Result extends \lithium\core\ObjectDeprecated implements \Iterator {
+abstract class Result implements \Iterator {
+
+	use AutoConfigurable;
 
 	/**
 	 * The current position of the iterator.
@@ -105,7 +110,6 @@ abstract class Result extends \lithium\core\ObjectDeprecated implements \Iterato
 	 * @return void
 	 */
 	protected function _init() {
-		parent::_init();
 		$this->next();
 	}
 
@@ -114,7 +118,7 @@ abstract class Result extends \lithium\core\ObjectDeprecated implements \Iterato
 	 *
 	 * @return array The current result (or `null` if there is none).
 	 */
-	public function current() {
+	public function current(): mixed {
 		return $this->_current;
 	}
 
@@ -123,7 +127,7 @@ abstract class Result extends \lithium\core\ObjectDeprecated implements \Iterato
 	 *
 	 * @return integer|null The current key position or `null` if there is none.
 	 */
-	public function key() {
+	public function key(): int | null {
 		return $this->_key;
 	}
 
@@ -132,7 +136,8 @@ abstract class Result extends \lithium\core\ObjectDeprecated implements \Iterato
 	 *
 	 * @return mixed The next result (or `null` if there is none).
 	 */
-	public function next() {
+	#[ReturnTypeWillChange]
+	public function next(): mixed {
 		if ($this->_buffer) {
 			list($this->_key, $this->_current) = array_shift($this->_buffer);
 			return $this->_current;
@@ -173,14 +178,14 @@ abstract class Result extends \lithium\core\ObjectDeprecated implements \Iterato
 	 *
 	 * @return void
 	 */
-	public function rewind() {}
+	public function rewind(): void {}
 
 	/**
 	 * Checks if current position is valid.
 	 *
 	 * @return boolean `true` if valid, `false` otherwise.
 	 */
-	public function valid() {
+	public function valid(): bool {
 		return $this->_valid;
 	}
 

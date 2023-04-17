@@ -16,7 +16,7 @@ use lithium\util\Collection;
  * The parser class uses PHP's tokenizer to provide methods and tools for performing static analysis
  * on PHP code.
  */
-class Parser extends \lithium\core\StaticObjectDeprecated {
+class Parser {
 
 	/**
 	 * Convenience method to get the token name of a PHP code string. If multiple tokens are
@@ -92,7 +92,7 @@ class Parser extends \lithium\core\StaticObjectDeprecated {
 	 * @param string $pattern
 	 * @param array $options The list of options to be used when parsing / matching `$code`:
 	 *              - 'ignore': An array of token names to ignore while parsing, defaults to
-	 *               `array('T_WHITESPACE')`
+	 *               `['T_WHITESPACE']`
 	 *              - 'lineBreaks': If true, all tokens in a single pattern match must appear on the
 	 *                same line of code, defaults to false
 	 *              - 'startOfLine': If true, the pattern must match starting with the beginning of

@@ -46,7 +46,7 @@ use lithium\g11n\Catalog;
  * @see lithium\console\command\G11n
  * @see lithium\g11n\catalog\adapter\Code
  */
-class Message extends \lithium\core\StaticObjectDeprecated {
+class Message {
 
 	/**
 	 * Holds cached message pages generated and used
@@ -149,9 +149,10 @@ class Message extends \lithium\core\StaticObjectDeprecated {
 			return Message::translate($message, $options + ['default' => $message]);
 		};
 		$tn = function($message1, $message2, $count, array $options = []) {
-			return Message::translate($message1, $options + compact('count') + [
+			$opts = is_array($count) ? $count : $options + compact('count') + [
 				'default' => $count === 1 ? $message1 : $message2
-			]);
+			];
+			return Message::translate($message1, $opts);
 		};
 		return compact('t', 'tn');
 	}

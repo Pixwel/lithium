@@ -105,7 +105,7 @@ class Text {
 				'/(?<!%s)%s%%s%s/',
 				preg_quote($options['escape'], '/'),
 				str_replace('%', '%%', preg_quote($options['before'], '/')),
-				str_replace('%', '%%', preg_quote($options['after'], '/'))
+				str_replace('%', '%%', preg_quote($options['after'] ?? '', '/'))
 			);
 		}
 
@@ -287,7 +287,7 @@ class Text {
 				$results[] = $buffer;
 				$buffer = '';
 			} else {
-				$buffer .= $data{$tmpOffset};
+				$buffer .= $data[$tmpOffset];
 			}
 
 			if ($options['leftBound'] !== $options['rightBound']) {

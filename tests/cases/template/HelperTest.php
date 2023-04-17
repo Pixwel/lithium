@@ -14,6 +14,8 @@ use lithium\tests\mocks\template\MockRenderer;
 
 class HelperTest extends \lithium\test\Unit {
 
+	public $helper;
+
 	public function setUp() {
 		$this->helper = new MockHelper();
 	}
@@ -125,20 +127,6 @@ class HelperTest extends \lithium\test\Unit {
 		$expected = ' selected="true"';
 		$result = $this->helper->attributes($attributes);
 		$this->assertEqual($expected, $result);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function testDeprecatedAttributes() {
-		error_reporting(($backup = error_reporting()) & ~E_USER_DEPRECATED);
-
-		$attributes = ['value' => 1, 'title' => 'one'];
-		$expected = ' value="1" title="one"';
-		$result = $this->helper->testProtectedAttributes($attributes);
-		$this->assertEqual($expected, $result);
-
-		error_reporting($backup);
 	}
 
 	public function testInstantiationWithNoContext() {

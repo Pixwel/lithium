@@ -18,6 +18,8 @@ use stdClass;
 
 class LibrariesTest extends \lithium\test\Unit {
 
+	public $hasApp;
+
 	protected $_cache = [];
 
 	public function setUp() {
@@ -38,12 +40,12 @@ class LibrariesTest extends \lithium\test\Unit {
 		$invalidDS = $ds === '/' ? '\\' : '/';
 
 		$result = Libraries::path('\lithium\core\Libraries');
-		$this->assertNotEmpty(strpos($result, "${ds}lithium${ds}core${ds}Libraries.php"));
+		$this->assertNotEmpty(strpos($result, "{$ds}lithium{$ds}core{$ds}Libraries.php"));
 		$this->assertFileExists($result);
 		$this->assertFalse(strpos($result, $invalidDS));
 
 		$result = Libraries::path('lithium\core\Libraries');
-		$this->assertNotEmpty(strpos($result, "${ds}lithium${ds}core${ds}Libraries.php"));
+		$this->assertNotEmpty(strpos($result, "{$ds}lithium{$ds}core{$ds}Libraries.php"));
 		$this->assertFileExists($result);
 		$this->assertFalse(strpos($result, $invalidDS));
 	}
@@ -619,7 +621,7 @@ EOD;
 	public function testLocateWithLithiumLibrary() {
 		$expected = (array) Libraries::find('lithium', [
 			'path' => '/tests',
-			'preFilter' => '/[A-Z][A-Za-z0-9]+\Test\./',
+			'preFilter' => '/[A-Z][A-Za-z0-9]+Test\./',
 			'recursive' => true,
 			'filter' => '/cases|integration|functional|mocks/'
 		]);
@@ -788,17 +790,6 @@ EOD;
 
 		$result = $object->testMe();
 		$this->assertEqual('patched class', $result);
-	}
-
-	/* Deprecated / BC */
-
-	/**
-	 * @deprecated
-	 */
-	public function testDeprectatedInit() {
-		$this->assertException("/has been removed/i", function() {
-			MockInitMethod::li3();
-		});
 	}
 }
 

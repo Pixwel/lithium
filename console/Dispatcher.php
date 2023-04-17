@@ -24,7 +24,7 @@ use UnexpectedValueException;
  * parameters passed to the script. `Dispatcher` then invokes `lithium\console\Router` to determine
  * the correct `Command` class to invoke, and which method should be called.
  */
-class Dispatcher extends \lithium\core\StaticObjectDeprecated {
+class Dispatcher {
 
 	/**
 	 * Fully-namespaced router class reference.
@@ -133,7 +133,9 @@ class Dispatcher extends \lithium\core\StaticObjectDeprecated {
 				$request->params['args'][0] = $name;
 				$name = 'lithium\console\command\Help';
 			}
-			if (class_exists($class = Libraries::locate('command', $name))) {
+			$class = Libraries::locate('command', $name);
+
+			if ($class && class_exists($class)) {
 				return new $class(compact('request'));
 			}
 			throw new UnexpectedValueException("Command `{$name}` not found.");

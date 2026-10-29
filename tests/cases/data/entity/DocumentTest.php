@@ -31,6 +31,11 @@ class DocumentTest extends \lithium\test\Unit {
 		MockDocumentPost::reset();
 	}
 
+	public function testCurrentOnEmptyDocument() {
+		$document = new Document();
+		$this->assertFalse($document->current());
+	}
+
 	public function testFindAllAndIterate() {
 		$set = MockDocumentPost::all();
 

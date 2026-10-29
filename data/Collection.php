@@ -238,7 +238,7 @@ abstract class Collection extends \lithium\util\Collection {
 	 */
 	public function offsetExists($offset): bool {
 		$this->offsetGet($offset);
-		return array_key_exists($offset, $this->_data);
+		return array_key_exists($offset ?? '', $this->_data);
 	}
 
 	/**

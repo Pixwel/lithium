@@ -68,6 +68,9 @@ class CollectionTest extends \lithium\test\Unit {
 	public function testNullOffsetLooksUpEmptyStringKey() {
 		$collection = new MockCollection(['data' => ['' => 'empty key']]);
 		$this->assertEqual('empty key', $collection->offsetGet(null));
+		$this->assertTrue($collection->offsetExists(null));
+		$empty = new MockCollection();
+		$this->assertFalse($empty->offsetExists(null));
 	}
 
 	/**

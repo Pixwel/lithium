@@ -423,7 +423,7 @@ class Document extends \lithium\data\Entity implements \Iterator, \ArrayAccess {
 	#[ReturnTypeWillChange]
 	public function current(): mixed {
 		$current = current($this->_data);
-		return isset($this->_removed[key($this->_data)]) ? null : $current;
+		return isset($this->_removed[key($this->_data) ?? '']) ? null : $current;
 	}
 
 	#[ReturnTypeWillChange]

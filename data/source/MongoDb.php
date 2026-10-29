@@ -312,17 +312,17 @@ class MongoDb extends \lithium\data\Source {
 				return new Regex($value);
 			},
 			'$exists' => function($key, $value) {
-				return ['$exists' => (boolean) $value];
+				return ['$exists' => (bool) $value];
 			},
 			'$type' => function($key, $value) {
-				return ['$type' => (integer) $value];
+				return ['$type' => (int) $value];
 			},
 			'$mod' => function($key, $value) {
 				$value = (array) $value;
 				return ['$mod' => [current($value), next($value) ?: 0]];
 			},
 			'$size' => function($key, $value) {
-				return ['$size' => (integer) $value];
+				return ['$size' => (int) $value];
 			},
 			'$elemMatch' => function($operator, $values, $options = []) {
 				$options += [

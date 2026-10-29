@@ -130,9 +130,6 @@ class Help extends \lithium\console\Command {
 			if ($item->name[0] === '_') {
 				return;
 			}
-			if ($setAccess = !$item->isPublic()) {
-				$item->setAccessible(true);
-			}
 			$args = [];
 
 			foreach ($item->getParameters() as $arg) {
@@ -146,9 +143,6 @@ class Help extends \lithium\console\Command {
 				'docComment' => $item->getDocComment(),
 				'name' => $item->getName()
 			];
-			if ($setAccess) {
-				$item->setAccessible(false);
-			}
 			return $result;
 		};
 

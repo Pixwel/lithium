@@ -367,7 +367,7 @@ class Query {
 	 */
 	public function limit($limit = null) {
 		if ($limit) {
-			$this->_config['limit'] = (integer) $limit;
+			$this->_config['limit'] = (int) $limit;
 			return $this;
 		}
 		if ($limit === false) {
@@ -385,7 +385,7 @@ class Query {
 	 */
 	public function offset($offset = null) {
 		if ($offset !== null) {
-			$this->_config['offset'] = (integer) $offset;
+			$this->_config['offset'] = (int) $offset;
 			return $this;
 		}
 		return $this->_config['offset'];
@@ -399,7 +399,7 @@ class Query {
 	 */
 	public function page($page = null) {
 		if ($page) {
-			$this->_config['page'] = $page = ((integer) $page ?: 1);
+			$this->_config['page'] = $page = ((int) $page ?: 1);
 			$this->offset(($page - 1) * $this->_config['limit']);
 			return $this;
 		}
@@ -719,7 +719,7 @@ class Query {
 	 * @param \lithium\data\Source $source Instance of the data source to use for conversion.
 	 * @return array Map between aliases and their corresponding dotted relation paths.
 	 */
-	public function paths(Source $source = null) {
+	public function paths(?Source $source = null) {
 		if ($source) {
 			$this->applyStrategy($source);
 		}
@@ -732,7 +732,7 @@ class Query {
 	 * @param \lithium\data\Source $source Instance of the data source to use for conversion.
 	 * @return array Map between aliases and their corresponding fully-namespaced model names.
 	 */
-	public function models(Source $source = null) {
+	public function models(?Source $source = null) {
 		if ($source) {
 			$this->applyStrategy($source);
 		}

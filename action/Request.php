@@ -607,7 +607,7 @@ class Request extends \lithium\net\http\Request {
 			return $detector($this);
 		}
 		if (!is_array($detector)) {
-			return (boolean) $this->env($detector);
+			return (bool) $this->env($detector);
 		}
 		list($key, $check) = $detector + ['', ''];
 
@@ -615,7 +615,7 @@ class Request extends \lithium\net\http\Request {
 			$check = '/' . join('|', $check) . '/i';
 		}
 		if (Validator::isRegex($check)) {
-			return (boolean) preg_match($check, $this->env($key));
+			return (bool) preg_match($check, $this->env($key));
 		}
 		return ($this->env($key) === $check);
 	}

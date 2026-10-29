@@ -51,13 +51,13 @@ class Schema extends \lithium\data\DocumentSchema {
 				return is_string($v) && preg_match('/^[0-9a-f]{24}$/', $v) ? new ObjectId($v) : $v;
 			},
 			'date' => function($v) {
-				$v = is_numeric($v) ? (integer) $v : strtotime($v);
+				$v = is_numeric($v) ? (int) $v : strtotime($v);
 				return !$v ? new UTCDateTime() : new UTCDateTime($v * 1000);
 			},
 			'regex' => function($v) { return new Regex($v); },
-			'integer' => function($v) { return (integer) $v; },
+			'integer' => function($v) { return (int) $v; },
 			'float' => function($v) { return (float) $v; },
-			'boolean' => function($v) { return (boolean) $v; },
+			'boolean' => function($v) { return (bool) $v; },
 			'code' => function($v) { return new Javascript($v); },
 			'binary' => function($v) { return new Binary($v); }
 		];

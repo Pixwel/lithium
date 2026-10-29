@@ -202,11 +202,11 @@ class Response extends \lithium\net\http\Message {
 				}
 			}
 		}
-		if (!isset($this->_statuses[$this->status['code']])) {
+		if (!isset($this->_statuses[$this->status['code'] ?? ''])) {
 			return false;
 		}
-		if (isset($this->status[$key])) {
-			return $this->status[$key];
+		if (isset($this->status[$key ?? ''])) {
+			return $this->status[$key ?? ''];
 		}
 		return "{$this->protocol} {$this->status['code']} {$this->status['message']}";
 	}

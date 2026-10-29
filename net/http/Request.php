@@ -309,7 +309,7 @@ class Request extends \lithium\net\http\Message {
 			'version' => $this->version,
 			'ignore_errors' => $this->_config['ignoreErrors'],
 			'follow_location' => $this->_config['followLocation'],
-			'request_fulluri' => (boolean) $this->_config['proxy']
+			'request_fulluri' => (bool) $this->_config['proxy']
 		];
 		$options += $defaults;
 

@@ -29,7 +29,7 @@ class HostString {
 	 */
 	public static function parse($host) {
 		if ($host[0] === ':') {
-			return ['port' => (integer) substr($host, 1)];
+			return ['port' => (int) substr($host, 1)];
 		}
 		if ($host[0] === '[') {
 			if (($close = strpos($host, ']')) === false) {
@@ -41,7 +41,7 @@ class HostString {
 				}
 				return [
 					'host' => substr($host, 1, $close - 1),
-					'port' => (integer) substr($host, $close + 2)
+					'port' => (int) substr($host, $close + 2)
 				];
 			}
 			return ['host' => substr($host, 1, -1)];
@@ -49,7 +49,7 @@ class HostString {
 		if (($colon = strpos($host, ':')) !== false) {
 			return [
 				'host' => substr($host, 0, $colon),
-				'port' => (integer) substr($host, $colon + 1)
+				'port' => (int) substr($host, $colon + 1)
 			];
 		}
 		return ['host' => $host];

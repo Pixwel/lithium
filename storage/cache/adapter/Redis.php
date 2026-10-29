@@ -231,7 +231,7 @@ class Redis extends \lithium\storage\cache\Adapter {
 	 * @return boolean `true` on successful delete, `false` otherwise.
 	 */
 	public function delete(array $keys) {
-		return (boolean) $this->connection->del($keys);
+		return (bool) $this->connection->del($keys);
 	}
 
 	/**

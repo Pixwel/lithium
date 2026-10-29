@@ -370,7 +370,7 @@ class MediaTest extends \lithium\test\Unit {
 				ob_start();
 				$out = fopen('php://output', 'w');
 				foreach ($data as $record) {
-					fputcsv($out, $record);
+					fputcsv($out, $record, ',', '"', '\\');
 				}
 				fclose($out);
 				return ob_get_clean();

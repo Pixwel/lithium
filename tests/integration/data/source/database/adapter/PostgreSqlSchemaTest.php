@@ -28,7 +28,6 @@ class PostgreSqlSchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testTableMeta() {
 		$method = new ReflectionMethod($this->_db, '_meta');
-		$method->setAccessible(true);
 
 		$data = [
 			'tablespace' => 'hello'
@@ -45,7 +44,6 @@ class PostgreSqlSchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testPrimaryKeyConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$data = [
 			'column' => 'id'
@@ -64,7 +62,6 @@ class PostgreSqlSchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testUniqueConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$data = [
 			'column' => 'id'
@@ -91,7 +88,6 @@ class PostgreSqlSchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testCheckConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$schema = new Schema([
 			'fields' => [
@@ -117,7 +113,6 @@ class PostgreSqlSchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testForeignKeyConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$data = [
 			'column' => 'table_id',

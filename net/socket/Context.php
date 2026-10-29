@@ -127,8 +127,8 @@ class Context extends \lithium\net\Socket {
 				null, 'request', (array) $data + $this->_config, $this->_classes
 			);
 		}
-		return stream_context_set_option(
-			$this->_resource, $data->to('context', ['timeout' => $this->_timeout])
+		return stream_context_set_params(
+			$this->_resource, ['options' => $data->to('context', ['timeout' => $this->_timeout])]
 		);
 	}
 

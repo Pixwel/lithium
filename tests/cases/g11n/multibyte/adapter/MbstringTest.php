@@ -212,8 +212,11 @@ class MbstringTest extends \lithium\test\Unit {
 		$string = "ab\xe9cab";
 		$start = 0;
 		$length = 3;
+		$previous = mb_substitute_character();
+		mb_substitute_character(0x3f);
 		$result = $this->adapter->substr($string, $start, $length);
-		$expected = "ab\xe9ca";
+		mb_substitute_character($previous);
+		$expected = PHP_VERSION_ID < 80300 ? "ab\xe9ca" : "ab?";
 		$this->assertEqual($expected, $result);
 	}
 }

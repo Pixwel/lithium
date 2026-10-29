@@ -240,7 +240,7 @@ class Validator {
 			],
 			'ip' => function($value, $format = null, array $options = []) {
 				$options += ['flags' => []];
-				return (boolean) filter_var($value, FILTER_VALIDATE_IP, $options);
+				return (bool) filter_var($value, FILTER_VALIDATE_IP, $options);
 			},
 			'money'        => [
 				'right'    => '/^(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))' .
@@ -322,7 +322,7 @@ class Validator {
 			},
 			'url' => function($value, $format = null, array $options = []) {
 				$options += ['flags' => []];
-				return (boolean) filter_var($value, FILTER_VALIDATE_URL, $options);
+				return (bool) filter_var($value, FILTER_VALIDATE_URL, $options);
 			}
 		];
 

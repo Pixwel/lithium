@@ -73,8 +73,8 @@ class Set {
 		$path = is_array($path) ? $path : explode('.', $path);
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && (integer) $key > 0 || $key === '0') {
-				$key = (integer) $key;
+			if (is_numeric($key) && (int) $key > 0 || $key === '0') {
+				$key = (int) $key;
 			}
 			if ($i === count($path) - 1) {
 				return (is_array($data) && isset($data[$key]));
@@ -441,7 +441,7 @@ class Set {
 				continue;
 			}
 			list($path, $key) = explode($options['separator'], $key, 2);
-			$path = is_numeric($path) ? (integer) $path : $path;
+			$path = is_numeric($path) ? (int) $path : $path;
 
 			if (!isset($result[$path]) || !is_array($result[$path])) {
 				$result[$path] = [];
@@ -528,8 +528,8 @@ class Set {
 		$_list =& $list;
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && (integer) $key > 0 || $key === '0') {
-				$key = (integer) $key;
+			if (is_numeric($key) && (int) $key > 0 || $key === '0') {
+				$key = (int) $key;
 			}
 			if ($i === count($path) - 1) {
 				$_list[$key] = $data;
@@ -585,7 +585,7 @@ class Set {
 			return true;
 		}
 		if (is_string($conditions)) {
-			return (boolean) static::extract($data, $conditions);
+			return (bool) static::extract($data, $conditions);
 		}
 		foreach ($conditions as $condition) {
 			if ($condition === ':last') {
@@ -741,8 +741,8 @@ class Set {
 		$_list =& $list;
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && (integer) $key > 0 || $key === '0') {
-				$key = (integer) $key;
+			if (is_numeric($key) && (int) $key > 0 || $key === '0') {
+				$key = (int) $key;
 			}
 			if ($i === count($path) - 1) {
 				unset($_list[$key]);

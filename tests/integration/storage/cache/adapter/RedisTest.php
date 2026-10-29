@@ -163,7 +163,7 @@ class RedisTest extends \lithium\test\Integration {
 		$this->assertTrue($result);
 
 		$result = $this->_redis->exists($key);
-		$this->assertTrue((boolean) $result);
+		$this->assertTrue((bool) $result);
 
 		$expected = -1;
 		$result = $this->_redis->ttl($key);
@@ -178,7 +178,7 @@ class RedisTest extends \lithium\test\Integration {
 		$this->assertTrue($result);
 
 		$result = $this->_redis->exists($key);
-		$this->assertTrue((boolean) $result);
+		$this->assertTrue((bool) $result);
 
 		$expected = -1;
 		$result = $this->_redis->ttl($key);
@@ -193,7 +193,7 @@ class RedisTest extends \lithium\test\Integration {
 		$this->assertTrue($result);
 
 		$result = $this->_redis->exists($key);
-		$this->assertTrue((boolean) $result);
+		$this->assertTrue((bool) $result);
 
 		$expected = -1;
 		$result = $this->_redis->ttl($key);
@@ -208,7 +208,7 @@ class RedisTest extends \lithium\test\Integration {
 		$this->redis->write($keys, $expiry);
 
 		$result = $this->_redis->exists('key1');
-		$this->assertTrue((boolean) $result);
+		$this->assertTrue((bool) $result);
 
 		$this->_redis->del('key1');
 
@@ -219,7 +219,7 @@ class RedisTest extends \lithium\test\Integration {
 		sleep(2);
 
 		$result = $this->_redis->exists('key1');
-		$this->assertFalse((boolean) $result);
+		$this->assertFalse((bool) $result);
 	}
 
 	public function testWriteExpiryTtl() {
@@ -228,7 +228,7 @@ class RedisTest extends \lithium\test\Integration {
 		$this->redis->write($keys, $expiry);
 
 		$result = $this->_redis->exists('key1');
-		$this->assertTrue((boolean) $result);
+		$this->assertTrue((bool) $result);
 
 		$this->_redis->del('key1');
 
@@ -239,7 +239,7 @@ class RedisTest extends \lithium\test\Integration {
 		sleep(2);
 
 		$result = $this->_redis->exists('key1');
-		$this->assertFalse((boolean) $result);
+		$this->assertFalse((bool) $result);
 	}
 
 	public function testWriteWithScope() {
@@ -409,7 +409,7 @@ class RedisTest extends \lithium\test\Integration {
 		$expected = ['key1' => 'test1'];
 		$adapter->delete($keys);
 
-		$result = (boolean) $this->_redis->get('key1');
+		$result = (bool) $this->_redis->get('key1');
 		$this->assertTrue($result);
 
 		$result = $this->_redis->get('primary:key1');

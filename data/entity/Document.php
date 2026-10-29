@@ -458,7 +458,7 @@ class Document extends \lithium\data\Entity implements \Iterator, \ArrayAccess {
 		$this->_valid = (next($this->_data) !== false);
 		$cur = key($this->_data);
 
-		if (isset($this->_removed[$cur])) {
+		if (isset($this->_removed[$cur ?? ''])) {
 			return $this->next();
 		}
 		if (!$this->_valid && $cur !== $prev && $cur !== null) {

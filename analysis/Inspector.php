@@ -144,26 +144,11 @@ class Inspector {
 				continue;
 			}
 			if (method_exists($inspector, static::$_methodMap[$key])) {
-				$setAccess = (
-					($type === 'method' || $type === 'property') &&
-					array_intersect($result['modifiers'], ['private', 'protected']) !== [] &&
-					method_exists($inspector, 'setAccessible')
-				);
-
-				if ($setAccess) {
-					$inspector->setAccessible(true);
-				}
 				$result[$key] = $inspector->{static::$_methodMap[$key]}();
-
-				if ($setAccess) {
-					$inspector->setAccessible(false);
-				}
 			}
 		}
 
 		if ($type === 'property' && $classInspector && !$classInspector->isAbstract()) {
-			$inspector->setAccessible(true);
-
 			try {
 				$result['value'] = $inspector->getValue(static::_class($class));
 			} catch (Exception $e) {
@@ -356,12 +341,6 @@ class Inspector {
 
 		return static::_items($reflClass, 'getProperties', $options)->map(function($item) use ($class) {
 			$modifiers = array_values(static::_modifiers($item));
-			$setAccess = (
-				array_intersect($modifiers, ['private', 'protected']) !== []
-			);
-			if ($setAccess) {
-				$item->setAccessible(true);
-			}
 			if (is_string($class)) {
 				if (!$item->isStatic()) {
 					$message = 'Must provide an object instance for non-static properties.';
@@ -375,9 +354,6 @@ class Inspector {
 				'docComment' => $item->getDocComment(),
 				'name' => $item->getName()
 			];
-			if ($setAccess) {
-				$item->setAccessible(false);
-			}
 			return $result;
 		}, ['collect' => false]);
 	}

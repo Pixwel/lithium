@@ -54,7 +54,6 @@ class ControllerTest extends \lithium\test\Unit {
 			'request' => $this->request, 'classes' => $this->classes
 		]);
 		$method = new ReflectionMethod($model, '_class');
-		$method->setAccessible(true);
 
 		$expected = 'PostsController';
 		$result = $method->invokeArgs($model, [$this->request]);
@@ -70,7 +69,6 @@ class ControllerTest extends \lithium\test\Unit {
 		]);
 
 		$method = new ReflectionMethod($model, '_use');
-		$method->setAccessible(true);
 
 		$expected = 'create_test\\models\\Posts';
 		$result = $method->invokeArgs($model, [$this->request]);

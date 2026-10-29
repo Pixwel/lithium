@@ -28,7 +28,6 @@ class Sqlite3SchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testColumnMeta() {
 		$method = new ReflectionMethod($this->_db, '_meta');
-		$method->setAccessible(true);
 
 		$data = ['collate' => 'NOCASE'];
 		$result = [];
@@ -41,7 +40,6 @@ class Sqlite3SchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testPrimaryKeyConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$data = [
 			'column' => 'id'
@@ -60,7 +58,6 @@ class Sqlite3SchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testUniqueConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$data = [
 			'column' => 'id'
@@ -87,7 +84,6 @@ class Sqlite3SchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testCheckConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$schema = new Schema([
 			'fields' => [
@@ -113,7 +109,6 @@ class Sqlite3SchemaTest extends \lithium\tests\integration\data\Base {
 
 	public function testForeignKeyConstraint() {
 		$method = new ReflectionMethod($this->_db, '_constraint');
-		$method->setAccessible(true);
 
 		$data = [
 			'column' => 'table_id',

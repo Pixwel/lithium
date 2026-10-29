@@ -248,6 +248,7 @@ abstract class Collection extends \lithium\util\Collection {
 	 * @return mixed Returns an `Entity` object if exists otherwise returns `null`.
 	 */
 	public function offsetGet($offset): mixed {
+		$offset = $offset ?? '';
 		while (!array_key_exists($offset, $this->_data) && $this->_populate()) {}
 
 		if (array_key_exists($offset, $this->_data)) {

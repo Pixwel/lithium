@@ -161,7 +161,7 @@ class Curl extends \lithium\net\Socket {
 				]);
 			}
 		}
-		return (boolean) curl_setopt_array($this->_resource, $this->options);
+		return (bool) curl_setopt_array($this->_resource, $this->options);
 	}
 
 	/**

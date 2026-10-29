@@ -91,7 +91,7 @@ class Multibyte extends \lithium\core\Adaptable {
 			$regex .= '|\xF4[\x80-\x8F][\x80-\xBF]{2}';
 			$regex .= ')*\z/m';
 		}
-		return (boolean) preg_match($regex, $string);
+		return (bool) preg_match($regex, $string);
 	}
 
 	/**

@@ -251,7 +251,6 @@ class DatabaseTest extends \lithium\tests\integration\data\Base {
 		$uuid = Text::uuid();
 		Images::update(['title' => $uuid], ['id' => $firstID]);
 		$this->assertEqual($uuid, Images::find('first', $options)->title);
-		$this->images[0]['title'] = $uuid;
 	}
 
 	public function testFields() {

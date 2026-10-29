@@ -16,14 +16,14 @@ class MockCookieSession {
 	protected static $_data = ['one' => 'foo', 'two' => 'bar'];
 
 	public static function read($key = null, array $options = []) {
-		if (isset(static::$_data[$key])) {
-			return static::$_data[$key];
+		if (isset(static::$_data[$key ?? ''])) {
+			return static::$_data[$key ?? ''];
 		}
 		return static::$_data;
 	}
 
 	public static function write($key, $value = null, array $options = []) {
-		static::$_data[$key] = $value;
+		static::$_data[$key ?? ''] = $value;
 		return $value;
 	}
 

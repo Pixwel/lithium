@@ -253,7 +253,7 @@ class Gettext extends \lithium\g11n\catalog\Adapter {
 			} elseif (substr($line, 0, 14) === 'msgid_plural "') {
 				$item['ids']['plural'] = substr($line, 14, -1);
 			} elseif (substr($line, 0, 7) === 'msgstr[') {
-				$item['translated'][(integer) substr($line, 7, 1)] = substr($line, 11, -1);
+				$item['translated'][(int) substr($line, 7, 1)] = substr($line, 11, -1);
 			}
 		}
 		return $this->_merge($data, $item);
@@ -361,7 +361,7 @@ class Gettext extends \lithium\g11n\catalog\Adapter {
 	protected function _readLong($stream, $isBigEndian) {
 		$result = unpack($isBigEndian ? 'N1' : 'V1', fread($stream, 4));
 		$result = current($result);
-		return (integer) substr($result, -8);
+		return (int) substr($result, -8);
 	}
 
 	/**

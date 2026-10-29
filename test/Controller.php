@@ -53,7 +53,7 @@ class Controller {
 			$request = $params['request'];
 			$options = $params['options'];
 			$params = $params['dispatchParams'];
-			set_time_limit((integer) $options['timeout']);
+			set_time_limit((int) $options['timeout']);
 			$group = join('\\', (array) $params['args']);
 
 			if ($group === "all") {

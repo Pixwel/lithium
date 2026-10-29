@@ -69,9 +69,9 @@ class CouchDb extends \lithium\data\source\Http {
 	protected function _init() {
 		parent::_init();
 		$this->_handlers += [
-			'integer' => function($v) { return (integer) $v; },
+			'integer' => function($v) { return (int) $v; },
 			'float'   => function($v) { return (float) $v; },
-			'boolean' => function($v) { return (boolean) $v; }
+			'boolean' => function($v) { return (bool) $v; }
 		];
 	}
 
@@ -379,7 +379,7 @@ class CouchDb extends \lithium\data\source\Http {
 	public function calculation($type, $query, array $options = []) {
 		switch ($type) {
 			case 'count':
-				return (integer) $this->read($query, $options)->stats('total_rows');
+				return (int) $this->read($query, $options)->stats('total_rows');
 			default:
 				return null;
 		}

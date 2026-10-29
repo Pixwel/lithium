@@ -48,6 +48,17 @@ class EncryptTest extends \lithium\test\Unit {
 
 		$this->assertEqual('foo', $decrypted);
 	}
+	public function testReadsExistingCiphertextWithPadding() {
+		$secret = str_repeat('a', 32);
+		$vector = str_repeat('v', 16);
+		$data = ['message' => "value with trailing spaces  ", 'empty' => ''];
+		$ciphertext = openssl_encrypt(serialize($data), 'aes-256-cbc', $secret, OPENSSL_RAW_DATA, $vector);
+		MockCookieSession::write('__encrypted', base64_encode($ciphertext) . base64_encode($vector));
+		$encrypt = new Encrypt(['secret' => $secret]);
+		$this->assertEqual($data, $encrypt->read(null, ['class' => $this->mock, 'key' => null]));
+		$this->assertEqual($data['message'], $encrypt->read(null, ['class' => $this->mock, 'key' => 'message']));
+	}
+
 }
 
 ?>

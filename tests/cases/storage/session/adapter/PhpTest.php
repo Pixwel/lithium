@@ -69,10 +69,10 @@ class PhpTest extends \lithium\test\Unit {
 		$this->assertEqual(basename(Libraries::get(true, 'path')), $result);
 
 		$result = ini_get('session.cookie_lifetime');
-		$this->assertEqual(0, (integer) $result);
+		$this->assertEqual(0, (int) $result);
 
 		$result = ini_get('session.cookie_httponly');
-		$this->assertNotEmpty((integer) $result);
+		$this->assertNotEmpty((int) $result);
 
 		$name = 'this-is-a-custom-name';
 		$php = new MockPhp(['session.name' => $name]);
@@ -93,7 +93,7 @@ class PhpTest extends \lithium\test\Unit {
 		$this->assertEqual($config['session.name'], $result);
 
 		$result = ini_get('session.cookie_lifetime');
-		$this->assertEqual($config['session.cookie_lifetime'], (integer) $result);
+		$this->assertEqual($config['session.cookie_lifetime'], (int) $result);
 
 		$result = ini_get('session.cookie_domain');
 		$this->assertEqual($config['session.cookie_domain'], $result);

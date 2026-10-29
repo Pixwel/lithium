@@ -87,7 +87,7 @@ class Encrypt {
 		$key = isset($options['key']) ? $options['key'] : null;
 
 		if (!isset($encrypted['__encrypted']) || !$encrypted['__encrypted']) {
-			return isset($encrypted[$key]) ? $encrypted[$key] : null;
+			return isset($encrypted[$key ?? '']) ? $encrypted[$key ?? ''] : null;
 		}
 		$current = $this->_decrypt($encrypted['__encrypted']);
 
@@ -177,7 +177,7 @@ class Encrypt {
 			$data,
 			'aes-256-cbc',
 			$secret,
-			OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING,
+			OPENSSL_RAW_DATA,
 			$vector
 		);
 		return unserialize(trim($decrypted));

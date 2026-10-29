@@ -181,7 +181,6 @@ class MySqlTest extends \lithium\tests\integration\data\Base {
 
 	public function testColumnAbstraction() {
 		$method = new ReflectionMethod($this->_db, '_column');
-		$method->setAccessible(true);
 
 		$result = $method->invokeArgs($this->_db, ['varchar']);
 		$this->assertIdentical(['type' => 'string'], $result);

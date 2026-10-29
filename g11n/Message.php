@@ -202,12 +202,12 @@ class Message {
 				$id = "{$id}|{$context}";
 			}
 
-			if (!isset(static::$_cachedPages[$options['scope']][$locale])) {
-				static::$_cachedPages[$options['scope']][$locale] = Catalog::read(
+			if (!isset(static::$_cachedPages[$options['scope'] ?? ''][$locale ?? ''])) {
+				static::$_cachedPages[$options['scope'] ?? ''][$locale ?? ''] = Catalog::read(
 					true, 'message', $locale, $options
 				);
 			}
-			$page = static::$_cachedPages[$options['scope']][$locale];
+			$page = static::$_cachedPages[$options['scope'] ?? ''][$locale ?? ''];
 
 			if (!isset($page[$id])) {
 				return null;

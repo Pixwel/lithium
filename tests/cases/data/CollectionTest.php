@@ -65,6 +65,11 @@ class CollectionTest extends \lithium\test\Unit {
 		$this->assertEqual($collection->offsetExists(1), true);
 	}
 
+	public function testNullOffsetLooksUpEmptyStringKey() {
+		$collection = new MockCollection(['data' => ['' => 'empty key']]);
+		$this->assertEqual('empty key', $collection->offsetGet(null));
+	}
+
 	/**
 	 * Tests `Collection::rewind` and `Collection::current`.
 	 */

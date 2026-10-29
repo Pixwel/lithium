@@ -156,7 +156,7 @@ class MemcacheTest extends \lithium\test\Integration {
 		$result = $adapter->write($keys, $expiry);
 		$this->assertTrue($result);
 
-		$result = (boolean) $this->_conn->get('key1');
+		$result = (bool) $this->_conn->get('key1');
 		$this->assertTrue($result);
 
 		$this->_conn->delete('key1');
@@ -167,7 +167,7 @@ class MemcacheTest extends \lithium\test\Integration {
 		$result = $adapter->write($keys, $expiry);
 		$this->assertTrue($result);
 
-		$result = (boolean) $this->_conn->get('key1');
+		$result = (bool) $this->_conn->get('key1');
 		$this->assertTrue($result);
 
 		$this->_conn->delete('key1');
@@ -178,7 +178,7 @@ class MemcacheTest extends \lithium\test\Integration {
 		$result = $adapter->write($keys, $expiry);
 		$this->assertTrue($result);
 
-		$result = (boolean) $this->_conn->get('key1');
+		$result = (bool) $this->_conn->get('key1');
 		$this->assertTrue($result);
 
 		$this->_conn->delete('key1');
@@ -189,7 +189,7 @@ class MemcacheTest extends \lithium\test\Integration {
 		$expiry = '+5 seconds';
 		$this->memcache->write($keys, $expiry);
 
-		$result = (boolean) $this->_conn->get('key1');
+		$result = (bool) $this->_conn->get('key1');
 		$this->assertTrue($result);
 
 		$this->_conn->delete('key1');
@@ -364,7 +364,7 @@ class MemcacheTest extends \lithium\test\Integration {
 		$expected = ['key1' => 'test1'];
 		$adapter->delete($keys);
 
-		$result = (boolean) $this->_conn->get('key1');
+		$result = (bool) $this->_conn->get('key1');
 		$this->assertTrue($result);
 
 		$result = $this->_conn->get('primary:key1');

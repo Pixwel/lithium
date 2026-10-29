@@ -675,7 +675,7 @@ class Model {
 			$name,
 			$args
 		);
-		return (boolean) $args;
+		return (bool) $args;
 	}
 
 	/**
@@ -1090,7 +1090,7 @@ class Model {
 	 * @param array $methods
 	 * @return array
 	 */
-	public static function instanceMethods(array $methods = null) {
+	public static function instanceMethods(?array $methods = null) {
 		$class = get_called_class();
 
 		if (!isset(static::$_instanceMethods[$class])) {

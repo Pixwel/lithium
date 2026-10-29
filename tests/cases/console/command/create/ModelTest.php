@@ -54,7 +54,6 @@ class ModelTest extends \lithium\test\Unit {
 			'request' => $this->request, 'classes' => $this->classes
 		]);
 		$method = new ReflectionMethod($model, '_class');
-		$method->setAccessible(true);
 
 		$expected = 'Posts';
 		$result = $method->invokeArgs($model, [$this->request]);

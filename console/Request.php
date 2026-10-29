@@ -153,8 +153,8 @@ class Request {
 	 *         available, `null` will be returned.
 	 */
 	public function env($key = null) {
-		if (!empty($this->_env[$key])) {
-			return $this->_env[$key];
+		if (!empty($this->_env[$key ?? ''])) {
+			return $this->_env[$key ?? ''];
 		}
 		if ($key === null) {
 			return $this->_env;

@@ -124,7 +124,7 @@ class DocumentSchema extends \lithium\data\Schema {
 			return $value;
 		}
 		$type = $this->type($field);
-		return isset($this->_handlers[$type]) ? $this->_handlers[$type]($value) : $value;
+		return isset($this->_handlers[$type ?? '']) ? $this->_handlers[$type ?? '']($value) : $value;
 	}
 }
 

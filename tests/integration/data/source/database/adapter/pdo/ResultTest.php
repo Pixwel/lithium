@@ -64,7 +64,7 @@ class ResultTest extends \lithium\tests\integration\data\Base {
 		$result = new Result();
 		$this->assertNull($result->resource());
 
-		$resource = new PDOStatement;
+		$resource = $this->_db->connection->query("SELECT id, name FROM galleries;");
 		$result = new Result(compact('resource'));
 		$this->assertInstanceOf('PDOStatement', $result->resource());
 	}

@@ -83,7 +83,7 @@ class Memory {
 	 */
 	public function write($key, $value, array $options = []) {
 		return function($params) {
-			return (boolean) ($this->_session[$params['key']] = $params['value']);
+			return (bool) ($this->_session[$params['key']] = $params['value']);
 		};
 	}
 

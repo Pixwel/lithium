@@ -376,8 +376,8 @@ abstract class Database extends \lithium\data\Source {
 	 *         database adapter subclass.
 	 */
 	public function name($name) {
-		if (isset($this->_cachedNames[$name])) {
-			return $this->_cachedNames[$name];
+		if (isset($this->_cachedNames[$name ?? ''])) {
+			return $this->_cachedNames[$name ?? ''];
 		}
 
 		list($open, $close) = $this->_quotes;
@@ -390,7 +390,7 @@ abstract class Database extends \lithium\data\Source {
 		} else {
 			$result = $name;
 		}
-		return $this->_cachedNames[$name] = $result;
+		return $this->_cachedNames[$name ?? ''] = $result;
 	}
 
 	/**
@@ -718,7 +718,7 @@ abstract class Database extends \lithium\data\Source {
 			}
 
 			$sql = $this->renderCommand('update', $exportedQuery, $query);
-			$result = (boolean) $this->_execute($sql);
+			$result = (bool) $this->_execute($sql);
 
 			if ($result && is_object($query) && $query->entity()) {
 				$query->entity()->sync();
@@ -749,7 +749,7 @@ abstract class Database extends \lithium\data\Source {
 			} else {
 				$sql = Text::insert($query, $this->value($params['options']));
 			}
-			$result = (boolean) $this->_execute($sql);
+			$result = (bool) $this->_execute($sql);
 
 			if ($result && $isObject && $query->entity()) {
 				$query->entity()->sync(null, [], ['dematerialize' => true]);
@@ -787,7 +787,7 @@ abstract class Database extends \lithium\data\Source {
 				if (!$result || !isset($result[0]['count'])) {
 					return null;
 				}
-				return (integer) $result[0]['count'];
+				return (int) $result[0]['count'];
 		}
 	}
 
@@ -1123,7 +1123,7 @@ abstract class Database extends \lithium\data\Source {
 	public function fields($fields, $context) {
 		$type = $context->type();
 		$schema = $context->schema()->fields();
-		$alias = $context->alias();
+		$alias = $context->alias() ?? '';
 
 		if (!is_array($fields)) {
 			return $this->_fieldsReturn($type, $context, $fields, $schema);
@@ -1168,7 +1168,7 @@ abstract class Database extends \lithium\data\Source {
 	 * @return array Reformatted fields
 	 */
 	protected function _fields($fields, $context) {
-		$alias = $context->alias();
+		$alias = $context->alias() ?? '';
 		$models = $context->models($this);
 		$list = [];
 
@@ -1599,7 +1599,7 @@ abstract class Database extends \lithium\data\Source {
 		if (is_string($value)) {
 			return ($value === 't' || $value === 'T' || $value === 'true');
 		}
-		return (boolean) $value;
+		return (bool) $value;
 	}
 
 	/**
@@ -1685,8 +1685,8 @@ abstract class Database extends \lithium\data\Source {
 		list($first, $second) = $this->_splitFieldname($name);
 		if (!$first && preg_match('/^[a-z0-9_-]+$/i', $second)) {
 			return $alias . "." . $second;
-		} elseif (isset($map[$first])) {
-			return $map[$first] . "." . $second;
+		} elseif (isset($map[$first ?? ''])) {
+			return $map[$first ?? ''] . "." . $second;
 		}
 		return $name;
 	}

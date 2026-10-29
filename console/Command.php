@@ -399,7 +399,7 @@ class Command {
 
 		if (!is_array($options)) {
 			if (is_bool($options)) {
-				$options = ['nl' => (integer) $options];
+				$options = ['nl' => (int) $options];
 			} elseif (is_int($options)) {
 				$options = ['nl' => $options];
 			} elseif (is_string($options)) {
@@ -421,7 +421,7 @@ class Command {
 			$string = "{:{$options['style']}}{$string}{:end}";
 		}
 		if ($options['nl']) {
-			$string = $string . $this->nl((integer) $options['nl']);
+			$string = $string . $this->nl((int) $options['nl']);
 		}
 		return $this->response->{$type}($string);
 	}

@@ -142,7 +142,7 @@ class ErrorHandler {
 		static::$_exceptionHandler = null;
 		static::$_checks = [
 			'type'  => function($config, $info) {
-				return (boolean) array_filter((array) $config['type'], function($type) use ($info) {
+				return (bool) array_filter((array) $config['type'], function($type) use ($info) {
 					return $type === $info['type'] || is_subclass_of($info['type'], $type);
 				});
 			},
@@ -150,7 +150,7 @@ class ErrorHandler {
 				return ($config['code'] & $info['code']);
 			},
 			'stack' => function($config, $info) {
-				return (boolean) array_intersect((array) $config['stack'], $info['stack']);
+				return (bool) array_intersect((array) $config['stack'], $info['stack']);
 			},
 			'message' => function($config, $info) {
 				return preg_match($config['message'], $info['message']);

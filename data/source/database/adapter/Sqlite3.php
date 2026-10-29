@@ -320,10 +320,11 @@ class Sqlite3 extends \lithium\data\source\Database {
 		}
 
 		$column = array_intersect_key($column, ['type' => null, 'length' => null]);
+		$column['type'] = strtolower($column['type']);
 		if (isset($column['length']) && $column['length']) {
 			$length = explode(',', $column['length']) + [null, null];
-			$column['length'] = $length[0] ? (integer) $length[0] : null;
-			$length[1] ? $column['precision'] = (integer) $length[1] : null;
+			$column['length'] = $length[0] ? (int) $length[0] : null;
+			$length[1] ? $column['precision'] = (int) $length[1] : null;
 		}
 
 		switch (true) {

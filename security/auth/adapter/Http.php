@@ -121,8 +121,8 @@ class Http {
 		$basic = $auth::encode($username, $request->env('PHP_AUTH_PW'));
 		$encoded = ['response' => null];
 
-		if (isset($users[$username])) {
-			$encoded = $auth::encode($username, $users[$username]);
+		if (isset($users[$username ?? ''])) {
+			$encoded = $auth::encode($username, $users[$username ?? '']);
 		}
 		if ($basic['response'] !== $encoded['response']) {
 			$this->_writeHeader("WWW-Authenticate: Basic realm=\"{$this->_config['realm']}\"");

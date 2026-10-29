@@ -7,10 +7,10 @@
  * The full license text can be found in the LICENSE.txt file.
  */
 
-$passes = (integer) $count['passes'] ?: 0;
-$asserts = (integer) $count['asserts'] ?: 0;
-$fails = (integer) $count['fails'] ?: 0;
-$exceptions = (integer) $count['exceptions'] ?: 0;
+$passes = (int) $count['passes'] ?: 0;
+$asserts = (int) $count['asserts'] ?: 0;
+$fails = (int) $count['fails'] ?: 0;
+$exceptions = (int) $count['exceptions'] ?: 0;
 
 ?>
 <div class="test-result test-result-<?php echo ($success ? 'success' : 'fail') ?>">

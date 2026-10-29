@@ -166,7 +166,7 @@ class Password {
 	 * @return string The Blowfish salt.
 	 */
 	protected static function _generateSaltBf($count = null) {
-		$count = (integer) $count;
+		$count = (int) $count;
 		$count = ($count < 4 || $count > 31) ? static::BF : $count;
 
 		$base64 = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -212,7 +212,7 @@ class Password {
 	 * @return string The XDES salt.
 	 */
 	protected static function _generateSaltXdes($count = null) {
-		$count = (integer) $count;
+		$count = (int) $count;
 		$count = ($count < 1 || $count > 24) ? static::XDES : $count;
 
 		$count = (1 << $count) - 1;

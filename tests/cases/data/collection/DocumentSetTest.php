@@ -45,7 +45,7 @@ class DocumentSetTest extends \lithium\test\Unit {
 				'int' => 'integer'
 			],
 			'handlers' => [
-				'integer' => function($v) { return (integer) $v; },
+				'integer' => function($v) { return (int) $v; },
 			]
 		]);
 
@@ -73,7 +73,7 @@ class DocumentSetTest extends \lithium\test\Unit {
 				'int' => 'integer'
 			],
 			'handlers' => [
-				'integer' => function($v) { return (integer) $v; },
+				'integer' => function($v) { return (int) $v; },
 			]
 		]);
 

@@ -79,7 +79,7 @@ class Sqlite3Test extends \lithium\tests\integration\data\Base {
 			'password' => '',
 			'dsn' => null,
 			'options' => [],
-			'init' => false
+			AUTO_INIT_CLASS => false
 		];
 		$this->assertEqual($expected, $result);
 	}
@@ -151,7 +151,6 @@ class Sqlite3Test extends \lithium\tests\integration\data\Base {
 
 	public function testColumnAbstraction() {
 		$method = new ReflectionMethod($this->_db, '_column');
-		$method->setAccessible(true);
 
 		$result = $method->invokeArgs($this->_db, ['varchar']);
 		$this->assertEqual(['type' => 'string', 'length' => 255], $result);
@@ -170,6 +169,9 @@ class Sqlite3Test extends \lithium\tests\integration\data\Base {
 
 		$result = $method->invokeArgs($this->_db, ['decimal(12,2)']);
 		$this->assertEqual(['type' => 'float', 'length' => 12, 'precision' => 2], $result);
+
+		$result = $method->invokeArgs($this->_db, ['INTEGER']);
+		$this->assertEqual(['type' => 'integer'], $result);
 
 		$result = $method->invokeArgs($this->_db, ['int(11)']);
 		$this->assertEqual(['type' => 'integer', 'length' => 11], $result);

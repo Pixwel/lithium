@@ -320,7 +320,7 @@ class FormTest extends \lithium\test\Unit {
 		]);
 
 		$result = $this->form->label('first_name', [
-			null => ['id' => 'first_name_label']
+			'' => ['id' => 'first_name_label']
 		]);
 		$this->assertTags($result, [
 			'label' => ['for' => 'first_name', 'id' => 'first_name_label'],

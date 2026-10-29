@@ -113,17 +113,17 @@ class Schema implements \ArrayAccess {
 	 * @return boolean
 	 */
 	public function is($condition, $field) {
-		if (!isset($this->_fields[$field])) {
+		if (!isset($this->_fields[$field ?? ''])) {
 			return null;
 		}
-		return isset($this->_fields[$field][$condition]) && $this->_fields[$field][$condition];
+		return isset($this->_fields[$field ?? ''][$condition]) && $this->_fields[$field ?? ''][$condition];
 	}
 
 	public function type($field) {
-		if (!isset($this->_fields[$field]['type'])) {
+		if (!isset($this->_fields[$field ?? '']['type'])) {
 			return null;
 		}
-		$type = $this->_fields[$field]['type'];
+		$type = $this->_fields[$field ?? '']['type'];
 		return isset($this->_types[$type]) ? $this->_types[$type] : $type;
 	}
 

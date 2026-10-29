@@ -498,7 +498,7 @@ class Media {
 
 					if (is_array($host)) {
 						$hash = substr(hexdec(md5($path)), 0, 10);
-						$index = ((integer) $hash) % count($host);
+						$index = ((int) $hash) % count($host);
 
 						if (is_array($defaults['scheme'])) {
 							$host = $defaults['scheme'][$index] . $host[$index];
@@ -563,7 +563,7 @@ class Media {
 		}
 
 		if ($host = $config['assets']) {
-			$type = $options['type'];
+			$type = $options['type'] ?? '';
 			$env  = Environment::get();
 			$base = isset($host[$env][$type]) ? $host[$env][$type] : null;
 			$base = (isset($host[$type]) && !$base) ? $host[$type] : $base;
@@ -676,7 +676,7 @@ class Media {
 			$options = $params['options'] + ['type' => $response->type()];
 
 			$result = null;
-			$type = $options['type'];
+			$type = $options['type'] ?? '';
 
 			if (!isset($handlers[$type])) {
 				throw new MediaException("Unhandled media type `{$type}`.");
@@ -983,7 +983,7 @@ class Media {
 	 * @return mixed Returns the previous scope if if `$name` is not null and `$closure` is null,
 	 *               returns the default used scope if `$name` is null, otherwise returns `null`.
 	 */
-	public static function scope($name = null, Closure $closure = null) {
+	public static function scope($name = null, ?Closure $closure = null) {
 		if ($name === null) {
 			return static::$_scope;
 		}

@@ -330,14 +330,14 @@ class Relationship {
 		}
 
 		switch($this->type()) {
-			case 'belongsTo';
+			case 'belongsTo':
 				return $this->_embedBelongsTo($collection, $options);
-			case 'hasMany';
+			case 'hasMany':
 				if ($this->link() === static::LINK_KEY_LIST) {
 					return $this->_embedHasManyAsList($collection, $options);
 				}
 				return $this->_embedHasMany($collection, $options);
-			case 'hasOne';
+			case 'hasOne':
 				return $this->_embedHasOne($collection, $options);
 			default:
 				throw new Exception("Error {$this->type()} is unsupported ");
